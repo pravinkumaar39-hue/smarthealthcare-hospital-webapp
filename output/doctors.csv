@@ -1,0 +1,251 @@
+doctor_id,first_name,last_name,gender,department,qualification,experience_yrs,phone,email,branch_id,consult_fee,rating,active
+DOC0001,Warinder,Bawa,Male,Dental,MBBS,15,05440547553,dr.warinder.bawa1@smarthealth.in,BR010,400,4.25,1
+DOC0002,Hemani,Merchant,Female,General Medicine,"MBBS, MD",3,+913690702499,dr.hemani.merchant2@smarthealth.in,BR007,300,4.51,1
+DOC0003,Daniel,Mall,Male,Dermatology,"MBBS, MD",24,1071787896,dr.daniel.mall3@smarthealth.in,BR010,400,4.23,1
+DOC0004,Yug,Parekh,Male,General Medicine,MBBS,12,3600454579,dr.yug.parekh4@smarthealth.in,BR010,1000,4.01,1
+DOC0005,Lohit,Dey,Male,General Medicine,"MBBS, MS",25,05373732695,dr.lohit.dey5@smarthealth.in,BR005,1000,4.24,1
+DOC0006,Irya,Seshadri,Female,Orthopedics,"MBBS, DNB",20,+914449712269,dr.irya.seshadri6@smarthealth.in,BR001,1000,4.17,0
+DOC0007,Nakul,Bora,Male,Cardiology,"MBBS, MS",23,03692009125,dr.nakul.bora7@smarthealth.in,BR004,400,4.61,1
+DOC0008,Yashodhara,Prakash,Female,Dermatology,"MBBS, DM",30,+914029708953,dr.yashodhara.prakash8@smarthealth.in,BR009,1500,3.61,1
+DOC0009,Yashica,Sodhi,Female,Pediatrics,"MBBS, MS",16,+916401374896,dr.yashica.sodhi9@smarthealth.in,BR008,300,4.67,1
+DOC0010,Yahvi,De,Female,Psychiatry,"MBBS, MS",13,03769246105,dr.yahvi.de10@smarthealth.in,BR010,1000,4.87,1
+DOC0011,Keya,Choudhury,Female,Dental,"MBBS, DM",27,0447940505,dr.keya.choudhury11@smarthealth.in,BR007,500,3.59,1
+DOC0012,Dalaja,Nath,Female,Dermatology,"MBBS, DM",5,4906035627,dr.dalaja.nath12@smarthealth.in,BR003,300,4.68,1
+DOC0013,Abdul,Rajan,Male,Ophthalmology,"MBBS, MS",31,+910500917195,dr.abdul.rajan13@smarthealth.in,BR009,300,4.11,1
+DOC0014,Jason,Sastry,Male,General Medicine,"MBBS, MD",5,+918177408988,dr.jason.sastry14@smarthealth.in,BR002,600,4.22,1
+DOC0015,Nimrat,Solanki,Female,General Medicine,"MBBS, DM",28,7531154516,dr.nimrat.solanki15@smarthealth.in,BR004,500,3.87,1
+DOC0016,Netra,Kala,Female,General Medicine,"MBBS, MS",10,3982883670,dr.netra.kala16@smarthealth.in,BR002,1500,3.71,1
+DOC0017,Anusha,Shah,Female,Dermatology,"MBBS, MS",27,01886828757,dr.anusha.shah17@smarthealth.in,BR004,600,3.63,1
+DOC0018,Chanakya,Sharaf,Male,Gynecology,"MBBS, MD",2,+913075578616,dr.chanakya.sharaf18@smarthealth.in,BR001,300,4.91,1
+DOC0019,Nitara,Krishnan,Female,ENT,"MBBS, MD",35,+913009322064,dr.nitara.krishnan19@smarthealth.in,BR010,1000,3.72,1
+DOC0020,Sai,Gokhale,Male,General Medicine,"MBBS, MS",28,+916672983619,dr.sai.gokhale20@smarthealth.in,BR006,750,4.49,1
+DOC0021,Niharika,Butala,Female,Orthopedics,"MBBS, MD",9,0282963802,dr.niharika.butala21@smarthealth.in,BR008,1500,4.95,1
+DOC0022,Tejas,Muni,Male,Pediatrics,"MBBS, DNB",13,2803151226,dr.tejas.muni22@smarthealth.in,BR008,600,4.01,1
+DOC0023,Nisha,Vora,Female,Oncology,"MBBS, DNB",9,+917729257836,dr.nisha.vora23@smarthealth.in,BR001,300,3.65,1
+DOC0024,Jackson,Sagar,Male,ENT,"MBBS, MS",11,1230532526,dr.jackson.sagar24@smarthealth.in,BR007,600,3.94,1
+DOC0025,Arjun,Baria,Male,Oncology,"MBBS, MS",5,+911812307388,dr.arjun.baria25@smarthealth.in,BR003,600,3.77,1
+DOC0026,Bhavani,Bose,Female,Cardiology,"MBBS, MD",32,2212436521,dr.bhavani.bose26@smarthealth.in,BR006,1000,4.09,1
+DOC0027,Bhanumati,Brahmbhatt,Female,Gynecology,"MBBS, DM",17,+917452050099,dr.bhanumati.brahmbhatt27@smarthealth.in,BR009,600,4.27,1
+DOC0028,Balveer,Bhavsar,Male,General Medicine,"MBBS, DNB",19,7158085111,dr.balveer.bhavsar28@smarthealth.in,BR006,1500,3.68,1
+DOC0029,Neel,Bajaj,Male,Cardiology,"MBBS, DM",9,4122501128,dr.neel.bajaj29@smarthealth.in,BR010,600,3.99,1
+DOC0030,Vasatika,Narula,Female,Ophthalmology,"MBBS, MD",4,+918267039097,dr.vasatika.narula30@smarthealth.in,BR007,1500,3.69,1
+DOC0031,Krishna,Anand,Female,Neurology,"MBBS, MD",15,09914937191,dr.krishna.anand31@smarthealth.in,BR006,1000,3.53,1
+DOC0032,Amol,Majumdar,Male,Cardiology,"MBBS, MS",9,01414688175,dr.amol.majumdar32@smarthealth.in,BR002,400,4.36,1
+DOC0033,Tara,Bhatt,Female,Oncology,"MBBS, MD",10,+919583483591,dr.tara.bhatt33@smarthealth.in,BR004,500,4.84,1
+DOC0034,Fariq,Sibal,Male,Cardiology,"MBBS, MS",32,03624799052,dr.fariq.sibal34@smarthealth.in,BR010,600,4.79,1
+DOC0035,Ishwar,Hans,Male,Ophthalmology,"MBBS, MS",4,4750917835,dr.ishwar.hans35@smarthealth.in,BR008,300,3.81,1
+DOC0036,Shivansh,Handa,Male,General Medicine,"MBBS, DM",10,6405858811,dr.shivansh.handa36@smarthealth.in,BR004,400,4.17,1
+DOC0037,Quincy,Palla,Male,Dermatology,"MBBS, DNB",18,07170775766,dr.quincy.palla37@smarthealth.in,BR006,300,4.58,1
+DOC0038,Ekaja,Shenoy,Female,ENT,"MBBS, DM",1,+910610420307,dr.ekaja.shenoy38@smarthealth.in,BR007,400,4.11,1
+DOC0039,Harshil,Palla,Male,Ophthalmology,"MBBS, DNB",28,+918682815978,dr.harshil.palla39@smarthealth.in,BR004,300,3.67,0
+DOC0040,Advaith,Andra,Male,General Medicine,MBBS,34,7861690085,dr.advaith.andra40@smarthealth.in,BR005,750,4.88,1
+DOC0041,Krisha,Lad,Female,ENT,"MBBS, DNB",14,7550748144,dr.krisha.lad41@smarthealth.in,BR004,1500,3.82,1
+DOC0042,Niharika,Khalsa,Female,General Medicine,"MBBS, DNB",11,4469266263,dr.niharika.khalsa42@smarthealth.in,BR009,750,4.11,1
+DOC0043,Orinder,Char,Male,Dermatology,"MBBS, DM",1,8138334941,dr.orinder.char43@smarthealth.in,BR006,1000,4.52,1
+DOC0044,Odika,Nazareth,Female,Oncology,"MBBS, DNB",9,+919927777135,dr.odika.nazareth44@smarthealth.in,BR001,750,4.98,1
+DOC0045,Tripti,Dalal,Female,Gynecology,MBBS,8,00013113787,dr.tripti.dalal45@smarthealth.in,BR004,400,3.89,1
+DOC0046,Bahadurjit,Zachariah,Male,Oncology,"MBBS, MD",24,09789293090,dr.bahadurjit.zachariah46@smarthealth.in,BR001,1500,4.48,1
+DOC0047,Umang,Sodhi,Male,General Medicine,"MBBS, MS",19,+915840090625,dr.umang.sodhi47@smarthealth.in,BR007,300,4.21,1
+DOC0048,Agastya,Magar,Male,Pediatrics,MBBS,14,06605068902,dr.agastya.magar48@smarthealth.in,BR009,1000,4.26,1
+DOC0049,Qabil,Pingle,Male,Cardiology,MBBS,4,2889737840,dr.qabil.pingle49@smarthealth.in,BR005,300,3.91,1
+DOC0050,Vaishnavi,Apte,Female,Orthopedics,"MBBS, DNB",22,01902416177,dr.vaishnavi.apte50@smarthealth.in,BR002,1000,3.82,1
+DOC0051,Ekansh,Halder,Male,Cardiology,"MBBS, MD",31,09730905330,dr.ekansh.halder51@smarthealth.in,BR005,600,3.98,1
+DOC0052,Dalbir,Dyal,Male,General Medicine,MBBS,7,01864704855,dr.dalbir.dyal52@smarthealth.in,BR007,750,4.9,1
+DOC0053,Aradhana,Garde,Female,General Medicine,"MBBS, DM",17,+911374471565,dr.aradhana.garde53@smarthealth.in,BR001,300,4.94,1
+DOC0054,Atharv,Kamdar,Male,Oncology,MBBS,26,01500748838,dr.atharv.kamdar54@smarthealth.in,BR010,750,4.54,1
+DOC0055,Falan,Sarin,Male,Pediatrics,MBBS,28,2012021526,dr.falan.sarin55@smarthealth.in,BR002,300,4.05,1
+DOC0056,Harini,Bava,Female,Dental,"MBBS, DNB",28,06795757186,dr.harini.bava56@smarthealth.in,BR002,300,4.35,1
+DOC0057,Vanya,Dhaliwal,Female,Orthopedics,"MBBS, DNB",34,00069736587,dr.vanya.dhaliwal57@smarthealth.in,BR004,1000,3.8,1
+DOC0058,Leena,Divan,Female,Ophthalmology,"MBBS, MS",2,3151108178,dr.leena.divan58@smarthealth.in,BR006,750,3.81,1
+DOC0059,Ira,Brar,Female,Dermatology,MBBS,23,+915719093661,dr.ira.brar59@smarthealth.in,BR007,500,4.16,1
+DOC0060,Warhi,Rout,Female,Cardiology,"MBBS, MD",16,08818837606,dr.warhi.rout60@smarthealth.in,BR010,1000,4.39,1
+DOC0061,Bahadurjit,Seshadri,Male,Cardiology,"MBBS, DM",26,+912550758493,dr.bahadurjit.seshadri61@smarthealth.in,BR003,300,4.2,1
+DOC0062,Devika,Srinivas,Female,Cardiology,MBBS,5,2640834443,dr.devika.srinivas62@smarthealth.in,BR006,750,4.72,1
+DOC0063,Mahika,Bhat,Female,Pediatrics,"MBBS, DNB",14,+918855991087,dr.mahika.bhat63@smarthealth.in,BR001,1500,4.81,1
+DOC0064,Upkaar,Chokshi,Male,ENT,"MBBS, MS",14,05663579038,dr.upkaar.chokshi64@smarthealth.in,BR003,1500,4.19,1
+DOC0065,Bhavya,Yohannan,Female,Orthopedics,"MBBS, DNB",15,08320073865,dr.bhavya.yohannan65@smarthealth.in,BR005,500,3.6,1
+DOC0066,Maanav,Kaul,Male,General Medicine,"MBBS, MD",34,00112699289,dr.maanav.kaul66@smarthealth.in,BR006,500,4.14,0
+DOC0067,Victor,Deshpande,Male,ENT,"MBBS, DM",13,+914976193487,dr.victor.deshpande67@smarthealth.in,BR001,750,4.87,1
+DOC0068,Warjas,Raj,Male,Oncology,MBBS,30,+911310986245,dr.warjas.raj68@smarthealth.in,BR004,750,4.8,1
+DOC0069,Ira,Buch,Female,ENT,"MBBS, DM",30,+915718265227,dr.ira.buch69@smarthealth.in,BR002,300,4.82,1
+DOC0070,Dalbir,Andra,Male,Cardiology,"MBBS, DM",33,08466656584,dr.dalbir.andra70@smarthealth.in,BR007,400,3.5,1
+DOC0071,Amol,Mander,Male,Pediatrics,MBBS,10,+919103749736,dr.amol.mander71@smarthealth.in,BR002,300,4.74,1
+DOC0072,Netra,Patil,Female,General Medicine,"MBBS, MS",19,07121249876,dr.netra.patil72@smarthealth.in,BR008,400,4.83,0
+DOC0073,Nidhi,Borde,Female,Neurology,"MBBS, DM",29,05721319139,dr.nidhi.borde73@smarthealth.in,BR008,300,4.64,1
+DOC0074,Saanvi,Vora,Female,Psychiatry,"MBBS, DNB",31,+919028297672,dr.saanvi.vora74@smarthealth.in,BR002,600,4.05,1
+DOC0075,Hemal,Babu,Female,ENT,"MBBS, DM",30,01135033668,dr.hemal.babu75@smarthealth.in,BR007,500,3.56,1
+DOC0076,Mitali,Mani,Female,Pediatrics,"MBBS, MD",13,2783677447,dr.mitali.mani76@smarthealth.in,BR005,1500,3.9,1
+DOC0077,Ijaya,Gara,Female,General Medicine,"MBBS, MS",9,05719554968,dr.ijaya.gara77@smarthealth.in,BR007,1000,4.57,1
+DOC0078,Lajita,Soni,Female,Gynecology,"MBBS, MD",9,+917604128177,dr.lajita.soni78@smarthealth.in,BR002,750,3.61,1
+DOC0079,Christopher,Sunder,Male,Pediatrics,"MBBS, MS",19,+916994442839,dr.christopher.sunder79@smarthealth.in,BR008,1000,3.86,1
+DOC0080,Ranbir,Kala,Male,Cardiology,"MBBS, DNB",8,+914700429554,dr.ranbir.kala80@smarthealth.in,BR002,500,3.56,1
+DOC0081,Wahab,D’Alia,Male,General Medicine,"MBBS, MD",27,+910073168080,dr.wahab.d’alia81@smarthealth.in,BR001,300,4.26,1
+DOC0082,Sachi,Golla,Female,Gynecology,"MBBS, MD",17,02399776753,dr.sachi.golla82@smarthealth.in,BR008,500,4.4,1
+DOC0083,Devansh,Yadav,Male,Cardiology,"MBBS, MS",33,+919187599058,dr.devansh.yadav83@smarthealth.in,BR009,1000,3.81,1
+DOC0084,Mason,Dada,Male,Gynecology,MBBS,19,4824641188,dr.mason.dada84@smarthealth.in,BR010,600,4.21,1
+DOC0085,Aahana,Kata,Female,Orthopedics,"MBBS, DNB",27,4670061693,dr.aahana.kata85@smarthealth.in,BR007,1500,3.93,1
+DOC0086,Kevin,Swaminathan,Male,General Medicine,"MBBS, MD",6,+918106370721,dr.kevin.swaminathan86@smarthealth.in,BR008,1000,3.71,1
+DOC0087,Ria,Bansal,Female,Orthopedics,"MBBS, DNB",10,2261634054,dr.ria.bansal87@smarthealth.in,BR005,600,4.31,1
+DOC0088,Robert,Mangal,Male,Dental,"MBBS, DM",9,8590175240,dr.robert.mangal88@smarthealth.in,BR005,300,3.56,1
+DOC0089,Aayush,Bora,Male,General Medicine,"MBBS, DM",4,05504935781,dr.aayush.bora89@smarthealth.in,BR002,500,4.5,1
+DOC0090,Maanas,Chander,Male,Cardiology,"MBBS, DNB",2,+917701533879,dr.maanas.chander90@smarthealth.in,BR009,1500,4.01,1
+DOC0091,Ekansh,Yohannan,Male,Pediatrics,MBBS,26,+919291238118,dr.ekansh.yohannan91@smarthealth.in,BR004,1000,3.59,1
+DOC0092,Yatan,Mall,Male,Dental,"MBBS, MS",27,0074326284,dr.yatan.mall92@smarthealth.in,BR004,600,4.4,1
+DOC0093,Hitesh,Ganesh,Male,ENT,MBBS,4,+917603567294,dr.hitesh.ganesh93@smarthealth.in,BR001,1000,3.56,1
+DOC0094,Laksh,Dhingra,Male,General Medicine,"MBBS, DM",34,07222647283,dr.laksh.dhingra94@smarthealth.in,BR002,1000,3.51,1
+DOC0095,Jason,Kanda,Male,General Medicine,"MBBS, MD",22,03260322275,dr.jason.kanda95@smarthealth.in,BR005,300,4.0,1
+DOC0096,Raghav,Chaudhry,Male,Gynecology,MBBS,15,05834417309,dr.raghav.chaudhry96@smarthealth.in,BR001,500,4.56,1
+DOC0097,Yashica,Chacko,Female,Orthopedics,"MBBS, MD",27,8192424129,dr.yashica.chacko97@smarthealth.in,BR007,400,4.3,1
+DOC0098,Tejas,Kara,Male,General Medicine,"MBBS, MD",28,09752288320,dr.tejas.kara98@smarthealth.in,BR009,300,4.02,0
+DOC0099,Januja,Suri,Female,ENT,"MBBS, MS",30,09800929367,dr.januja.suri99@smarthealth.in,BR001,1500,4.02,1
+DOC0100,Theodore,Walla,Male,Dental,MBBS,3,01455494444,dr.theodore.walla100@smarthealth.in,BR006,1000,4.32,1
+DOC0101,Ekavir,Sheth,Male,General Medicine,"MBBS, DNB",28,+917268323348,dr.ekavir.sheth101@smarthealth.in,BR008,400,4.41,1
+DOC0102,Jalsa,Jain,Female,Dental,MBBS,8,05573785139,dr.jalsa.jain102@smarthealth.in,BR005,400,4.5,1
+DOC0103,Indira,Bose,Female,Dental,"MBBS, MS",2,+916531264569,dr.indira.bose103@smarthealth.in,BR002,600,4.72,1
+DOC0104,Ranbir,Saxena,Male,Pediatrics,"MBBS, DM",26,07057171591,dr.ranbir.saxena104@smarthealth.in,BR003,1000,4.3,1
+DOC0105,Isaac,Karpe,Male,Orthopedics,"MBBS, MD",28,+913562550135,dr.isaac.karpe105@smarthealth.in,BR009,750,4.86,1
+DOC0106,Michael,Chowdhury,Male,General Medicine,"MBBS, DM",11,+913411373202,dr.michael.chowdhury106@smarthealth.in,BR008,600,3.76,1
+DOC0107,Ekaja,Balay,Female,Orthopedics,"MBBS, DM",33,+917382260686,dr.ekaja.balay107@smarthealth.in,BR009,300,4.35,1
+DOC0108,Triveni,Sama,Female,Dermatology,MBBS,26,+910709964886,dr.triveni.sama108@smarthealth.in,BR006,400,3.78,1
+DOC0109,Ishaan,Upadhyay,Male,Pediatrics,"MBBS, DNB",16,05681929959,dr.ishaan.upadhyay109@smarthealth.in,BR006,750,4.3,1
+DOC0110,Chaitaly,Chadha,Female,Gynecology,"MBBS, DM",30,+912984938350,dr.chaitaly.chadha110@smarthealth.in,BR003,600,3.98,1
+DOC0111,Krisha,Dhingra,Female,Orthopedics,MBBS,13,05329694863,dr.krisha.dhingra111@smarthealth.in,BR009,500,4.94,1
+DOC0112,Edhitha,Bhakta,Female,General Medicine,MBBS,19,1306533239,dr.edhitha.bhakta112@smarthealth.in,BR002,1500,4.16,1
+DOC0113,Shivani,Bobal,Female,Cardiology,"MBBS, DNB",13,+918664115164,dr.shivani.bobal113@smarthealth.in,BR010,300,4.93,1
+DOC0114,Lajita,Sachar,Female,Ophthalmology,"MBBS, MS",6,09239659782,dr.lajita.sachar114@smarthealth.in,BR009,750,4.16,1
+DOC0115,Upma,Bahl,Female,Pediatrics,MBBS,4,+918004703226,dr.upma.bahl115@smarthealth.in,BR006,1500,3.57,1
+DOC0116,Anmol,Arya,Male,Cardiology,"MBBS, DNB",12,8843913497,dr.anmol.arya116@smarthealth.in,BR009,600,4.34,1
+DOC0117,Krisha,Dalal,Female,Gynecology,MBBS,15,+915388893129,dr.krisha.dalal117@smarthealth.in,BR001,1500,3.71,1
+DOC0118,Aayush,Mukhopadhyay,Male,General Medicine,"MBBS, MD",22,4282361601,dr.aayush.mukhopadhyay118@smarthealth.in,BR001,300,4.47,1
+DOC0119,Advaith,Swamy,Male,Pediatrics,"MBBS, MD",2,+918938212101,dr.advaith.swamy119@smarthealth.in,BR007,1000,4.46,1
+DOC0120,Pratyush,Chaudhary,Male,General Medicine,"MBBS, MD",27,+916097849704,dr.pratyush.chaudhary120@smarthealth.in,BR010,400,4.73,1
+DOC0121,Faras,Bandi,Male,Orthopedics,MBBS,1,7766310094,dr.faras.bandi121@smarthealth.in,BR008,1000,3.79,1
+DOC0122,Oviya,Iyer,Female,ENT,"MBBS, DM",28,+919422365327,dr.oviya.iyer122@smarthealth.in,BR003,500,4.55,1
+DOC0123,Chaaya,Kuruvilla,Female,Cardiology,"MBBS, MS",2,02507623327,dr.chaaya.kuruvilla123@smarthealth.in,BR006,600,4.83,1
+DOC0124,Ria,Baral,Female,Cardiology,"MBBS, DNB",24,4448317493,dr.ria.baral124@smarthealth.in,BR007,1000,4.67,1
+DOC0125,Sarthak,Andra,Male,Neurology,"MBBS, DNB",32,+916168763073,dr.sarthak.andra125@smarthealth.in,BR004,500,4.47,1
+DOC0126,Vidhi,Gaba,Female,General Medicine,"MBBS, MS",5,+915758483639,dr.vidhi.gaba126@smarthealth.in,BR005,600,4.48,1
+DOC0127,Dhriti,Sawhney,Female,Orthopedics,"MBBS, DNB",13,+911389881029,dr.dhriti.sawhney127@smarthealth.in,BR005,750,3.8,1
+DOC0128,Naveen,Sathe,Male,Dermatology,"MBBS, MS",28,8223358623,dr.naveen.sathe128@smarthealth.in,BR003,1500,4.12,1
+DOC0129,Mahika,Dhar,Female,Dental,"MBBS, MS",34,2342264101,dr.mahika.dhar129@smarthealth.in,BR006,400,3.73,1
+DOC0130,Leela,Maharaj,Female,Pediatrics,"MBBS, DNB",31,+913056657760,dr.leela.maharaj130@smarthealth.in,BR001,750,4.85,1
+DOC0131,Saksham,Chokshi,Male,ENT,"MBBS, DM",14,2517434210,dr.saksham.chokshi131@smarthealth.in,BR005,500,3.87,0
+DOC0132,Nimrat,Keer,Female,Dental,"MBBS, MS",35,8893903169,dr.nimrat.keer132@smarthealth.in,BR001,500,3.54,1
+DOC0133,Tripti,Lal,Female,Cardiology,MBBS,24,06802687485,dr.tripti.lal133@smarthealth.in,BR001,750,3.76,1
+DOC0134,Dayamai,Chauhan,Female,General Medicine,MBBS,4,06612476859,dr.dayamai.chauhan134@smarthealth.in,BR008,400,3.92,1
+DOC0135,Vedant,Radhakrishnan,Male,Gynecology,"MBBS, DM",29,04692659028,dr.vedant.radhakrishnan135@smarthealth.in,BR004,1000,4.24,1
+DOC0136,Gauri,Solanki,Female,Cardiology,"MBBS, MS",1,04694825457,dr.gauri.solanki136@smarthealth.in,BR004,750,4.89,1
+DOC0137,Ranveer,Kohli,Male,Cardiology,"MBBS, MS",8,04782001376,dr.ranveer.kohli137@smarthealth.in,BR006,300,4.51,1
+DOC0138,Jatin,Pathak,Male,Cardiology,"MBBS, MS",2,+918137242046,dr.jatin.pathak138@smarthealth.in,BR003,750,3.64,1
+DOC0139,Qadim,Karan,Male,Oncology,"MBBS, MD",30,02170572677,dr.qadim.karan139@smarthealth.in,BR010,500,4.66,1
+DOC0140,Gopal,Bassi,Male,Ophthalmology,"MBBS, DM",22,+912030433077,dr.gopal.bassi140@smarthealth.in,BR004,300,4.7,1
+DOC0141,Aditya,Bala,Male,General Medicine,"MBBS, MD",23,1215323884,dr.aditya.bala141@smarthealth.in,BR010,300,3.91,1
+DOC0142,Bhavani,Nigam,Female,Orthopedics,"MBBS, DM",17,05062718106,dr.bhavani.nigam142@smarthealth.in,BR003,750,4.15,1
+DOC0143,Harish,Bobal,Male,ENT,"MBBS, MS",8,8544806676,dr.harish.bobal143@smarthealth.in,BR001,750,4.05,1
+DOC0144,Krishna,Sant,Male,Gynecology,"MBBS, MS",23,+919065165126,dr.krishna.sant144@smarthealth.in,BR005,500,4.93,1
+DOC0145,Odika,Krishna,Female,Dental,"MBBS, DNB",6,03704214152,dr.odika.krishna145@smarthealth.in,BR010,400,3.99,1
+DOC0146,Kamya,Sengupta,Female,Orthopedics,"MBBS, MS",21,08700098545,dr.kamya.sengupta146@smarthealth.in,BR004,1000,4.18,1
+DOC0147,Baghyawati,Ray,Female,General Medicine,"MBBS, MD",35,9357633812,dr.baghyawati.ray147@smarthealth.in,BR002,600,4.18,1
+DOC0148,Indali,Naik,Female,Orthopedics,"MBBS, MD",6,03360620376,dr.indali.naik148@smarthealth.in,BR006,1500,4.21,0
+DOC0149,Ayaan,Dayal,Male,ENT,"MBBS, MS",7,0707373668,dr.ayaan.dayal149@smarthealth.in,BR003,1500,4.14,1
+DOC0150,Anthony,Khurana,Male,Pediatrics,"MBBS, DM",26,+916976079046,dr.anthony.khurana150@smarthealth.in,BR003,300,4.38,1
+DOC0151,Upasna,Bains,Female,Gynecology,MBBS,28,+915593199493,dr.upasna.bains151@smarthealth.in,BR004,300,4.69,1
+DOC0152,Mahika,Loyal,Female,Psychiatry,"MBBS, DM",32,9161590287,dr.mahika.loyal152@smarthealth.in,BR001,500,4.0,1
+DOC0153,Faqid,Saha,Male,Psychiatry,"MBBS, MD",27,2255574194,dr.faqid.saha153@smarthealth.in,BR008,400,4.52,1
+DOC0154,Orinder,Bassi,Male,Dental,"MBBS, MD",18,9066036340,dr.orinder.bassi154@smarthealth.in,BR004,1500,4.66,1
+DOC0155,Chaitanya,Rai,Male,Cardiology,"MBBS, MS",6,+916931333634,dr.chaitanya.rai155@smarthealth.in,BR005,1000,3.73,1
+DOC0156,Neel,Gera,Male,Orthopedics,"MBBS, MS",3,0433264445,dr.neel.gera156@smarthealth.in,BR003,750,3.76,1
+DOC0157,Champak,Ravel,Male,Cardiology,"MBBS, MD",31,09461528681,dr.champak.ravel157@smarthealth.in,BR006,1500,4.06,1
+DOC0158,Nihal,Chopra,Male,Gynecology,MBBS,8,06740794917,dr.nihal.chopra158@smarthealth.in,BR006,500,4.39,1
+DOC0159,Amrita,Sampath,Female,General Medicine,MBBS,34,+918125706029,dr.amrita.sampath159@smarthealth.in,BR004,1000,3.95,1
+DOC0160,Zilmil,Gandhi,Female,Cardiology,MBBS,3,+914897147067,dr.zilmil.gandhi160@smarthealth.in,BR003,1000,4.97,1
+DOC0161,Owen,Ramanathan,Male,Dermatology,MBBS,21,00002197976,dr.owen.ramanathan161@smarthealth.in,BR001,600,3.72,1
+DOC0162,Nidra,Saxena,Female,Gynecology,"MBBS, DM",22,+914860165612,dr.nidra.saxena162@smarthealth.in,BR002,600,3.82,1
+DOC0163,Mohammed,Sarin,Male,Ophthalmology,"MBBS, MD",6,02569512516,dr.mohammed.sarin163@smarthealth.in,BR001,1000,4.26,1
+DOC0164,Ekansh,Thaker,Male,General Medicine,"MBBS, DNB",16,0261422847,dr.ekansh.thaker164@smarthealth.in,BR007,750,4.85,1
+DOC0165,Mekhala,Rajagopalan,Female,General Medicine,"MBBS, DM",28,7851368194,dr.mekhala.rajagopalan165@smarthealth.in,BR008,300,4.66,1
+DOC0166,Alka,Maharaj,Female,Pediatrics,"MBBS, DM",19,06358002729,dr.alka.maharaj166@smarthealth.in,BR006,1500,4.39,1
+DOC0167,Chakradhar,Sekhon,Male,Orthopedics,"MBBS, MD",4,+914112129058,dr.chakradhar.sekhon167@smarthealth.in,BR005,500,3.98,1
+DOC0168,Zayan,Thakur,Male,General Medicine,"MBBS, DM",34,01936263134,dr.zayan.thakur168@smarthealth.in,BR004,750,4.24,1
+DOC0169,Joshua,Samra,Male,Neurology,"MBBS, MS",23,+917818295219,dr.joshua.samra169@smarthealth.in,BR001,400,4.39,1
+DOC0170,Kamya,Oommen,Female,ENT,MBBS,16,+912293114231,dr.kamya.oommen170@smarthealth.in,BR001,500,3.51,1
+DOC0171,Balveer,Patil,Male,Cardiology,"MBBS, DM",23,07970499883,dr.balveer.patil171@smarthealth.in,BR005,1000,3.6,1
+DOC0172,Balveer,Ghosh,Male,Cardiology,"MBBS, DM",35,+916053954328,dr.balveer.ghosh172@smarthealth.in,BR009,300,3.57,1
+DOC0173,Lakshit,Palan,Male,Pediatrics,MBBS,4,1299387884,dr.lakshit.palan173@smarthealth.in,BR006,300,3.87,1
+DOC0174,Harrison,Bose,Male,General Medicine,"MBBS, MS",11,+917491487642,dr.harrison.bose174@smarthealth.in,BR003,300,3.65,1
+DOC0175,Timothy,Kalla,Male,Orthopedics,"MBBS, MD",12,+910920188706,dr.timothy.kalla175@smarthealth.in,BR001,1500,4.33,1
+DOC0176,Guneet,Divan,Male,Oncology,"MBBS, DM",34,2401162801,dr.guneet.divan176@smarthealth.in,BR002,1000,4.67,1
+DOC0177,Triya,Zachariah,Female,Ophthalmology,"MBBS, MD",35,+917328197507,dr.triya.zachariah177@smarthealth.in,BR010,1000,4.5,1
+DOC0178,Xalak,Doctor,Female,Dental,"MBBS, DM",1,+918890665056,dr.xalak.doctor178@smarthealth.in,BR008,1000,4.27,1
+DOC0179,Radhika,Prabhakar,Female,Orthopedics,"MBBS, MD",3,+914002671617,dr.radhika.prabhakar179@smarthealth.in,BR001,300,4.03,1
+DOC0180,Ekansh,Shankar,Male,ENT,"MBBS, DM",1,05399543161,dr.ekansh.shankar180@smarthealth.in,BR008,300,4.15,1
+DOC0181,Bina,Zacharia,Female,Oncology,MBBS,35,09814218592,dr.bina.zacharia181@smarthealth.in,BR010,500,3.66,1
+DOC0182,Jai,Behl,Male,Pediatrics,MBBS,8,+914492294689,dr.jai.behl182@smarthealth.in,BR010,1500,3.62,1
+DOC0183,Vinaya,Rattan,Female,Orthopedics,"MBBS, MS",27,1661185700,dr.vinaya.rattan183@smarthealth.in,BR010,600,3.71,1
+DOC0184,Charita,Bahri,Female,Orthopedics,MBBS,12,2073786655,dr.charita.bahri184@smarthealth.in,BR008,600,4.25,1
+DOC0185,Vritti,D’Alia,Female,Neurology,MBBS,33,5572903413,dr.vritti.d’alia185@smarthealth.in,BR009,600,4.63,1
+DOC0186,Shaurya,Murthy,Male,Gynecology,"MBBS, DM",7,+917673727259,dr.shaurya.murthy186@smarthealth.in,BR003,1000,4.1,1
+DOC0187,Amrita,Rao,Female,Pediatrics,MBBS,24,+915931215100,dr.amrita.rao187@smarthealth.in,BR006,600,3.81,1
+DOC0188,Darika,Ghosh,Female,Neurology,MBBS,11,9824861311,dr.darika.ghosh188@smarthealth.in,BR003,400,4.53,1
+DOC0189,Aachal,Gupta,Female,Dermatology,MBBS,20,08077109120,dr.aachal.gupta189@smarthealth.in,BR005,1500,4.09,1
+DOC0190,Lajita,Om,Female,Orthopedics,"MBBS, MD",1,9387959638,dr.lajita.om190@smarthealth.in,BR005,1000,3.67,1
+DOC0191,Nidhi,Nagy,Female,ENT,"MBBS, MS",12,+915468196623,dr.nidhi.nagy191@smarthealth.in,BR002,500,3.78,1
+DOC0192,Arjun,Andra,Male,Gynecology,"MBBS, DNB",27,+917363757081,dr.arjun.andra192@smarthealth.in,BR004,600,3.89,1
+DOC0193,Oni,Bhatt,Female,Orthopedics,"MBBS, DM",35,8077833682,dr.oni.bhatt193@smarthealth.in,BR010,600,4.39,1
+DOC0194,Samesh,Bhatt,Male,General Medicine,"MBBS, DNB",15,04645575310,dr.samesh.bhatt194@smarthealth.in,BR001,300,3.92,1
+DOC0195,Anthony,Deshpande,Male,Orthopedics,"MBBS, MD",6,06897427571,dr.anthony.deshpande195@smarthealth.in,BR006,750,4.96,1
+DOC0196,Laban,Virk,Male,ENT,"MBBS, DNB",8,1255291653,dr.laban.virk196@smarthealth.in,BR003,600,4.9,1
+DOC0197,Yug,Krishna,Male,Cardiology,MBBS,17,07401586684,dr.yug.krishna197@smarthealth.in,BR001,600,4.61,1
+DOC0198,Frederick,Saxena,Male,General Medicine,"MBBS, DM",11,+915452832402,dr.frederick.saxena198@smarthealth.in,BR003,750,3.74,1
+DOC0199,Girindra,Bali,Male,General Medicine,"MBBS, DNB",8,9122943971,dr.girindra.bali199@smarthealth.in,BR008,1000,4.38,0
+DOC0200,Nirja,Bansal,Female,Dermatology,"MBBS, DM",22,+910239414290,dr.nirja.bansal200@smarthealth.in,BR008,750,4.42,1
+DOC0201,Bhavani,Mittal,Female,Ophthalmology,"MBBS, DM",19,+911774919283,dr.bhavani.mittal201@smarthealth.in,BR010,750,4.17,1
+DOC0202,Ekiya,Merchant,Female,General Medicine,"MBBS, MD",7,5110967024,dr.ekiya.merchant202@smarthealth.in,BR008,300,3.67,1
+DOC0203,Bhavika,Borah,Female,ENT,"MBBS, DM",23,09934787762,dr.bhavika.borah203@smarthealth.in,BR009,1000,3.64,1
+DOC0204,Warinder,Mahajan,Male,Dental,MBBS,28,6793072178,dr.warinder.mahajan204@smarthealth.in,BR002,600,3.82,1
+DOC0205,Harita,Borah,Female,Orthopedics,"MBBS, MD",7,9279006846,dr.harita.borah205@smarthealth.in,BR007,400,4.74,1
+DOC0206,Mohini,Goel,Female,Dental,"MBBS, MS",23,7345763587,dr.mohini.goel206@smarthealth.in,BR008,1500,3.77,1
+DOC0207,Inaya,Chatterjee,Female,General Medicine,"MBBS, DNB",20,+911354925867,dr.inaya.chatterjee207@smarthealth.in,BR010,600,3.83,1
+DOC0208,Laksh,Nagarajan,Male,General Medicine,"MBBS, MD",34,04431328156,dr.laksh.nagarajan208@smarthealth.in,BR010,1000,4.37,1
+DOC0209,Brinda,Jain,Female,Pediatrics,"MBBS, MD",4,08233290460,dr.brinda.jain209@smarthealth.in,BR002,1500,3.81,1
+DOC0210,Yauvani,Master,Female,General Medicine,"MBBS, DM",23,07407248018,dr.yauvani.master210@smarthealth.in,BR004,1500,4.52,1
+DOC0211,Waida,Subramanian,Female,Cardiology,"MBBS, MD",27,+917908481527,dr.waida.subramanian211@smarthealth.in,BR002,1500,4.76,1
+DOC0212,Varsha,Cherian,Female,Cardiology,MBBS,3,+915275073613,dr.varsha.cherian212@smarthealth.in,BR005,1000,4.4,1
+DOC0213,Idika,Banik,Female,Dermatology,"MBBS, DNB",23,00632236281,dr.idika.banik213@smarthealth.in,BR005,500,4.27,1
+DOC0214,Vedant,Buch,Male,Orthopedics,"MBBS, DM",16,+911307366196,dr.vedant.buch214@smarthealth.in,BR010,750,4.32,1
+DOC0215,Veer,Choudhary,Male,Pediatrics,"MBBS, MS",14,7969781626,dr.veer.choudhary215@smarthealth.in,BR010,1000,3.73,1
+DOC0216,Sachi,Suri,Female,General Medicine,"MBBS, MS",5,+914168265970,dr.sachi.suri216@smarthealth.in,BR010,1000,4.61,1
+DOC0217,Avi,Saxena,Male,Gynecology,"MBBS, MS",32,+912127121519,dr.avi.saxena217@smarthealth.in,BR007,400,4.86,1
+DOC0218,Tristan,Bahl,Male,Neurology,"MBBS, DM",3,6273167349,dr.tristan.bahl218@smarthealth.in,BR002,1000,4.31,1
+DOC0219,Falguni,Lad,Female,Orthopedics,MBBS,14,+916786178405,dr.falguni.lad219@smarthealth.in,BR009,500,3.98,1
+DOC0220,Netra,Pall,Female,General Medicine,MBBS,16,1206126873,dr.netra.pall220@smarthealth.in,BR001,1500,4.7,1
+DOC0221,Vrinda,Arora,Female,ENT,"MBBS, DNB",3,+914498771589,dr.vrinda.arora221@smarthealth.in,BR010,600,4.54,1
+DOC0222,Edhitha,Tailor,Female,General Medicine,"MBBS, MS",3,1259833991,dr.edhitha.tailor222@smarthealth.in,BR009,1000,4.42,1
+DOC0223,Yatan,Kala,Male,Pediatrics,"MBBS, MD",22,08642151126,dr.yatan.kala223@smarthealth.in,BR002,600,4.1,1
+DOC0224,Bahadurjit,Amble,Male,General Medicine,"MBBS, DNB",31,1282775653,dr.bahadurjit.amble224@smarthealth.in,BR004,600,4.18,1
+DOC0225,Hitesh,Swaminathan,Male,General Medicine,"MBBS, MD",19,07326426677,dr.hitesh.swaminathan225@smarthealth.in,BR001,1000,4.88,1
+DOC0226,Hitesh,Bala,Male,Dermatology,"MBBS, MS",7,+914235279434,dr.hitesh.bala226@smarthealth.in,BR010,750,4.82,1
+DOC0227,Anirudh,Shankar,Male,ENT,MBBS,27,+916276647848,dr.anirudh.shankar227@smarthealth.in,BR004,400,4.6,1
+DOC0228,Urishilla,Bala,Female,Oncology,MBBS,35,5641310666,dr.urishilla.bala228@smarthealth.in,BR002,1000,4.69,1
+DOC0229,Anthony,Dube,Male,Cardiology,"MBBS, DNB",18,7294513560,dr.anthony.dube229@smarthealth.in,BR003,1000,4.98,1
+DOC0230,Ati,Borra,Female,Cardiology,"MBBS, MS",1,4806810659,dr.ati.borra230@smarthealth.in,BR010,500,4.16,1
+DOC0231,Qabil,Agarwal,Male,General Medicine,"MBBS, DNB",28,+916326237505,dr.qabil.agarwal231@smarthealth.in,BR002,500,4.12,1
+DOC0232,Nandini,Kadakia,Female,General Medicine,"MBBS, DM",23,+912602784624,dr.nandini.kadakia232@smarthealth.in,BR004,750,4.31,1
+DOC0233,Ayaan,Prashad,Male,Pediatrics,"MBBS, MS",20,8375945870,dr.ayaan.prashad233@smarthealth.in,BR003,500,4.76,0
+DOC0234,Ekbal,Kala,Male,Pediatrics,"MBBS, MD",25,+917105640067,dr.ekbal.kala234@smarthealth.in,BR002,1000,4.85,1
+DOC0235,Michael,Cherian,Male,Dermatology,"MBBS, MS",25,08679524087,dr.michael.cherian235@smarthealth.in,BR006,750,3.9,1
+DOC0236,Laban,Chaudhary,Male,General Medicine,"MBBS, MD",16,05075764496,dr.laban.chaudhary236@smarthealth.in,BR008,600,4.57,1
+DOC0237,Krishna,Goswami,Female,Gynecology,"MBBS, MD",23,+914819642404,dr.krishna.goswami237@smarthealth.in,BR004,400,4.31,1
+DOC0238,Indira,Rattan,Female,General Medicine,MBBS,35,04519160022,dr.indira.rattan238@smarthealth.in,BR004,750,4.52,1
+DOC0239,Faqid,Sane,Male,ENT,"MBBS, MS",9,5679926624,dr.faqid.sane239@smarthealth.in,BR005,1000,4.45,1
+DOC0240,Ishwar,Mall,Male,Orthopedics,"MBBS, MD",33,1781480896,dr.ishwar.mall240@smarthealth.in,BR004,500,4.12,1
+DOC0241,Radha,Raja,Female,Dermatology,"MBBS, DNB",15,+914692119368,dr.radha.raja241@smarthealth.in,BR004,500,3.81,1
+DOC0242,Vedika,Patil,Female,Orthopedics,"MBBS, DNB",17,04122876704,dr.vedika.patil242@smarthealth.in,BR001,750,4.15,1
+DOC0243,Lila,Morar,Female,General Medicine,"MBBS, MD",12,01869413904,dr.lila.morar243@smarthealth.in,BR007,750,4.92,1
+DOC0244,Anita,Zacharia,Female,General Medicine,"MBBS, MS",14,+918628355714,dr.anita.zacharia244@smarthealth.in,BR006,1500,4.75,1
+DOC0245,Hiral,Sibal,Female,General Medicine,"MBBS, DNB",34,+919319121259,dr.hiral.sibal245@smarthealth.in,BR010,500,4.41,1
+DOC0246,Oviya,Karnik,Female,Ophthalmology,MBBS,16,03241266620,dr.oviya.karnik246@smarthealth.in,BR010,600,4.71,1
+DOC0247,Unnati,Narain,Female,Cardiology,"MBBS, MD",21,06090288541,dr.unnati.narain247@smarthealth.in,BR010,300,4.76,1
+DOC0248,Bhavya,Bose,Female,General Medicine,"MBBS, DM",8,1201502615,dr.bhavya.bose248@smarthealth.in,BR009,750,3.8,1
+DOC0249,Reva,Kumar,Female,Cardiology,"MBBS, DNB",33,2771410452,dr.reva.kumar249@smarthealth.in,BR008,400,4.9,0
+DOC0250,Yoshita,Wason,Female,Dermatology,"MBBS, DNB",28,06468809049,dr.yoshita.wason250@smarthealth.in,BR007,600,4.38,1

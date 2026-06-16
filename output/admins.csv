@@ -1,0 +1,25 @@
+admin_id,name,email,phone,role,scope,branch_id,city
+ADM0001,Super Admin,superadmin@smarthealth.in,02056198736,SuperAdmin,ALL,,
+ADM0002,Zinal Sahni,state.admin1@smarthealth.in,05744408820,StateAdmin,Tamil Nadu,,
+ADM0003,Harinakshi Varma,state.admin2@smarthealth.in,1148774117,StateAdmin,Tamil Nadu,,
+ADM0004,Amara Memon,state.admin3@smarthealth.in,0538780639,StateAdmin,Tamil Nadu,,
+ADM0005,Jairaj Dara,city.admin1@smarthealth.in,8553148650,CityAdmin,Chennai,BR001,Chennai
+ADM0006,Shivansh Ray,city.admin2@smarthealth.in,02585790643,CityAdmin,Trichy,BR002,Trichy
+ADM0007,Bachittar Sami,city.admin3@smarthealth.in,8424701831,CityAdmin,Madurai,BR003,Madurai
+ADM0008,Urmi Sarna,city.admin4@smarthealth.in,3947621872,CityAdmin,Coimbatore,BR004,Coimbatore
+ADM0009,Dev Datta,city.admin5@smarthealth.in,03671021484,CityAdmin,Thanjavur,BR005,Thanjavur
+ADM0010,Gautam Dugal,city.admin6@smarthealth.in,06161087460,CityAdmin,Salem,BR006,Salem
+ADM0011,Vaishnavi Sood,city.admin7@smarthealth.in,+916884007287,CityAdmin,Tirunelveli,BR007,Tirunelveli
+ADM0012,Ayaan Atwal,city.admin8@smarthealth.in,8961653349,CityAdmin,Erode,BR008,Erode
+ADM0013,Ishwar Chander,city.admin9@smarthealth.in,9269810525,CityAdmin,Vellore,BR009,Vellore
+ADM0014,Maanas Dhawan,city.admin10@smarthealth.in,+917191427085,CityAdmin,Hosur,BR010,Hosur
+ADM0015,Turvi Parmar,city.admin11@smarthealth.in,+917093293334,CityAdmin,Chennai,BR001,Chennai
+ADM0016,Chatura Pandey,city.admin12@smarthealth.in,+919875838611,CityAdmin,Trichy,BR002,Trichy
+ADM0017,Jason Kulkarni,city.admin13@smarthealth.in,7677977566,CityAdmin,Madurai,BR003,Madurai
+ADM0018,Pahal Mittal,city.admin14@smarthealth.in,0973665935,CityAdmin,Coimbatore,BR004,Coimbatore
+ADM0019,Leela Parekh,city.admin15@smarthealth.in,2454172856,CityAdmin,Thanjavur,BR005,Thanjavur
+ADM0020,Adweta Wagle,city.admin16@smarthealth.in,+918741939270,CityAdmin,Salem,BR006,Salem
+ADM0021,Deepa Hayer,city.admin17@smarthealth.in,05099336913,CityAdmin,Tirunelveli,BR007,Tirunelveli
+ADM0022,Bhavya Pradhan,city.admin18@smarthealth.in,03540198779,CityAdmin,Erode,BR008,Erode
+ADM0023,Logan Sem,city.admin19@smarthealth.in,+912246438281,CityAdmin,Vellore,BR009,Vellore
+ADM0024,Zilmil Ramesh,city.admin20@smarthealth.in,+919010353543,CityAdmin,Hosur,BR010,Hosur

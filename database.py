@@ -1,0 +1,1 @@
+DATABASE_URL = "mysql+pymysql://besant:root@localhost/smarthealthcare"

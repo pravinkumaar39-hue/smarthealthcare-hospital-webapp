@@ -1,0 +1,11 @@
+scope,city,branch_id,total_patients,total_doctors,total_appointments,revenue,occupancy_pct,utilization_pct
+City,Chennai,BR001,500,30,1868,1387050,1.25,0.12
+City,Trichy,BR002,500,27,1677,1278500,0.66,0.12
+City,Madurai,BR003,500,21,1249,889850,1.4,0.11
+City,Coimbatore,BR004,500,30,1870,1271450,0.67,0.12
+City,Thanjavur,BR005,500,22,1177,876350,0.47,0.1
+City,Salem,BR006,500,25,1560,1319200,0.69,0.12
+City,Tirunelveli,BR007,500,20,1091,743850,0.68,0.1
+City,Erode,BR008,500,24,1512,919350,0.97,0.12
+City,Vellore,BR009,500,19,1117,811650,1.11,0.11
+City,Hosur,BR010,500,32,1879,1326650,1.18,0.11

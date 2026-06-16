@@ -1,0 +1,2 @@
+scope,total_states,total_branches,total_patients,total_doctors,total_appointments,total_revenue,completed_pct,cancellation_pct,no_show_pct
+Super,1,10,5000,250,15000,10823900,60.03,10.37,4.54

@@ -1,0 +1,11 @@
+branch_id,branch_name,city,state,address,locality,pincode,phone,email,total_beds,opened_on
+BR001,SmartHealth Chennai,Chennai,Tamil Nadu,"7, Periyar Street, Adyar",Adyar,600250,1043321819,chennai@smarthealth.in,137,2018-08-17
+BR002,SmartHealth Trichy,Trichy,Tamil Nadu,"189, Bharathi Street, Thillai Nagar",Thillai Nagar,620692,+910133890838,trichy@smarthealth.in,219,2018-08-02
+BR003,SmartHealth Madurai,Madurai,Tamil Nadu,"152, Temple Street, Anna Nagar",Anna Nagar,625032,+917940265423,madurai@smarthealth.in,87,2024-06-09
+BR004,SmartHealth Coimbatore,Coimbatore,Tamil Nadu,"56, Anna Salai, R. S. Puram",R. S. Puram,641517,01161559407,coimbatore@smarthealth.in,234,2020-07-28
+BR005,SmartHealth Thanjavur,Thanjavur,Tamil Nadu,"144, Anna Salai, Medical College Road",Medical College Road,613733,+916184959310,thanjavur@smarthealth.in,246,2022-09-12
+BR006,SmartHealth Salem,Salem,Tamil Nadu,"108, Anna Salai, Ammapet",Ammapet,636459,+914131647525,salem@smarthealth.in,230,2017-06-29
+BR007,SmartHealth Tirunelveli,Tirunelveli,Tamil Nadu,"208, Gandhi Road, Melapalayam",Melapalayam,627777,+914192832764,tirunelveli@smarthealth.in,120,2022-05-03
+BR008,SmartHealth Erode,Erode,Tamil Nadu,"88, Periyar Street, Brough Road",Brough Road,638159,8350305641,erode@smarthealth.in,135,2015-01-15
+BR009,SmartHealth Vellore,Vellore,Tamil Nadu,"27, Bharathi Street, Gandhi Nagar",Gandhi Nagar,632389,5376724238,vellore@smarthealth.in,104,2020-08-14
+BR010,SmartHealth Hosur,Hosur,Tamil Nadu,"217, Nehru Street, Bagalur Road",Bagalur Road,635618,09696532871,hosur@smarthealth.in,147,2024-04-22

@@ -1,0 +1,125 @@
+erDiagram
+    BRANCHES ||--o{ PATIENTS : "home branch"
+    BRANCHES ||--o{ DOCTORS : employs
+    BRANCHES ||--o{ APPOINTMENTS : hosts
+    BRANCHES ||--o{ HOSPITAL_EVENTS : at
+    BRANCHES ||--o| ADMINS : "city admin"
+    BRANCHES ||--|| BED_OCCUPANCY : metric
+    BRANCHES ||--|| READMISSION_STATS : metric
+    BRANCHES ||--|| BRANCH_UTILIZATION : metric
+    BRANCHES ||--|| KPI_CITY_ADMIN : dashboard
+
+    DOCTORS ||--o{ DOCTOR_AVAILABILITY : has
+    DOCTORS ||--o{ APPOINTMENTS : serves
+    DOCTORS ||--o{ MEDICAL_HISTORY : writes
+    DOCTORS ||--o{ HOSPITAL_EVENTS : performs
+    DOCTORS ||--|| DOCTOR_WORKLOAD : metric
+
+    PATIENTS ||--o{ APPOINTMENTS : books
+    PATIENTS ||--o{ MEDICAL_HISTORY : has
+    PATIENTS ||--o{ HOSPITAL_EVENTS : involved
+    PATIENTS ||--o{ NOTIFICATIONS : receives
+    PATIENTS ||--o{ AI_CHAT_HISTORY : chats
+
+    APPOINTMENTS ||--o| MEDICAL_HISTORY : produces
+    APPOINTMENTS ||--o{ HOSPITAL_EVENTS : triggers
+
+    BRANCHES {
+      string branch_id PK
+      string branch_name
+      string city
+      string state
+      int total_beds
+    }
+    PATIENTS {
+      string patient_id PK
+      string first_name
+      string last_name
+      string city
+      string home_branch_id FK
+    }
+    DOCTORS {
+      string doctor_id PK
+      string department
+      string branch_id FK
+      int consult_fee
+    }
+    DOCTOR_AVAILABILITY {
+      string availability_id PK
+      string doctor_id FK
+      date available_date
+      int max_per_slot
+      int total_capacity
+    }
+    APPOINTMENTS {
+      string appointment_id PK
+      string patient_id FK
+      string doctor_id FK
+      string branch_id FK
+      string department
+      date appointment_date
+      string slot_time
+      string status
+    }
+    MEDICAL_HISTORY {
+      string history_id PK
+      string patient_id FK
+      string doctor_id FK
+      string appointment_id FK
+      string diagnosis
+      int readmitted
+    }
+    HOSPITAL_EVENTS {
+      string event_id PK
+      string branch_id FK
+      string appointment_id FK
+      string patient_id FK
+      string doctor_id FK
+      string event_type
+    }
+    NOTIFICATIONS {
+      string notification_id PK
+      string patient_id FK
+      string channel
+      string status
+    }
+    AI_CHAT_HISTORY {
+      string chat_id PK
+      string patient_id FK
+      string intent
+      int satisfaction
+    }
+    ADMINS {
+      string admin_id PK
+      string role
+      string scope
+      string branch_id FK
+    }
+    BED_OCCUPANCY {
+      string branch_id PK
+      decimal occupancy_pct
+    }
+    READMISSION_STATS {
+      string branch_id PK
+      decimal readmission_pct
+    }
+    BRANCH_UTILIZATION {
+      string branch_id PK
+      decimal utilization_pct
+    }
+    DOCTOR_WORKLOAD {
+      string doctor_id PK
+      decimal workload_score
+    }
+    KPI_CITY_ADMIN {
+      string branch_id PK
+      bigint revenue
+    }
+    KPI_STATE_ADMIN {
+      string state PK
+      bigint revenue
+    }
+    KPI_SUPER_ADMIN {
+      string scope PK
+      bigint total_revenue
+    }
