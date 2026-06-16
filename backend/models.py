@@ -110,6 +110,33 @@ class Appointment(Base):
     patient = relationship("Patient", back_populates="appointments")
     doctor = relationship("Doctor", back_populates="appointments")
     branch = relationship("Branch", back_populates="appointments")
+    @property
+    def doctor_name(self):
+        if self.doctor:
+            return f"Dr. {self.doctor.first_name or ''} {self.doctor.last_name or ''}".strip()
+        return None
+
+    @property
+    def doctor_gender(self):
+        return self.doctor.gender if self.doctor else None
+
+    @property
+    def doctor_qualification(self):
+        return self.doctor.qualification if self.doctor else None
+
+    @property
+    def doctor_experience_yrs(self):
+        return self.doctor.experience_yrs if self.doctor else None
+
+    @property
+    def doctor_rating(self):
+        if self.doctor and self.doctor.rating is not None:
+            return float(self.doctor.rating)
+        return None
+
+    @property
+    def doctor_active(self):
+        return self.doctor.active if self.doctor else None
 
 
 class Admin(Base):

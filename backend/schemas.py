@@ -1,5 +1,6 @@
 from datetime import date
 from typing import Optional
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -84,6 +85,8 @@ class CurrentUserOut(BaseModel):
     name: Optional[str] = None
     city: Optional[str] = None
     branch_id: Optional[str] = None
+    gender: Optional[str] = None
+    blood_group: Optional[str] = None
     must_change_password: bool = False
 
 
@@ -96,12 +99,14 @@ class DoctorOut(BaseModel):
     doctor_id: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    gender: Optional[str] = None
     department: Optional[str] = None
     qualification: Optional[str] = None
     experience_yrs: Optional[int] = None
     branch_id: Optional[str] = None
     consult_fee: Optional[int] = None
     rating: Optional[float] = None
+    active: Optional[bool] = None
 
     class Config:
         from_attributes = True
@@ -132,7 +137,12 @@ class AppointmentOut(BaseModel):
     payment_mode: Optional[str] = None
     booked_on: Optional[date] = None
 
-    class Config:
-        from_attributes = True
+    doctor_name: Optional[str] = None
+    doctor_gender: Optional[str] = None
+    doctor_qualification: Optional[str] = None
+    doctor_experience_yrs: Optional[int] = None
+    doctor_rating: Optional[float] = None
+    doctor_active: Optional[bool] = None
+
     class Config:
         from_attributes = True
