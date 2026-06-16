@@ -2,6 +2,7 @@ from typing import Union
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -81,6 +82,48 @@ def generate_patient_id(db: Session) -> str:
             return new_id
 
         count += 1
+
+
+@router.post("/swagger-login")
+def swagger_login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
+    """
+    Swagger Authorize helper.
+
+    Swagger's Authorize popup sends:
+    username + password as form-data.
+
+    This endpoint supports both:
+    - Patient ID login
+    - Admin ID login
+    """
+    username = form_data.username.strip().upper()
+    password = form_data.password
+
+    patient = authenticate_patient(db, username, password)
+
+    if patient:
+        token = build_patient_token(patient)
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+        }
+
+    admin = authenticate_admin(db, username, password)
+
+    if admin:
+        token = build_admin_token(admin)
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+        }
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid username or password.",
+    )
 
 
 @router.post("/login/patient", response_model=Token)

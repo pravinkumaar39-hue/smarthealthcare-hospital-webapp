@@ -6,25 +6,29 @@ from models import Patient, Admin
 from security import create_access_token
 
 
+def clean_value(value) -> str:
+    return str(value or "").strip().upper().replace("\r", "").replace("\n", "")
+
+
 def authenticate_patient(
     db: Session,
     patient_id: str,
     password: str
 ) -> Optional[Patient]:
 
-    patient = (
-        db.query(Patient)
-        .filter(Patient.patient_id == patient_id)
-        .first()
-    )
+    patient_id_clean = clean_value(patient_id)
+    password_clean = clean_value(password)
 
-    if not patient:
-        return None
+    patients = db.query(Patient).all()
 
-    if password != patient.patient_id:
-        return None
+    for patient in patients:
+        db_patient_id = clean_value(patient.patient_id)
 
-    return patient
+        if db_patient_id == patient_id_clean:
+            if password_clean == db_patient_id:
+                return patient
+
+    return None
 
 
 def authenticate_admin(
@@ -33,19 +37,19 @@ def authenticate_admin(
     password: str
 ) -> Optional[Admin]:
 
-    admin = (
-        db.query(Admin)
-        .filter(Admin.admin_id == username)
-        .first()
-    )
+    username_clean = clean_value(username)
+    password_clean = clean_value(password)
 
-    if not admin:
-        return None
+    admins = db.query(Admin).all()
 
-    if password != admin.admin_id:
-        return None
+    for admin in admins:
+        db_admin_id = clean_value(admin.admin_id)
 
-    return admin
+        if db_admin_id == username_clean:
+            if password_clean == db_admin_id:
+                return admin
+
+    return None
 
 
 def normalize_admin_role(role: str) -> str:
@@ -54,15 +58,15 @@ def normalize_admin_role(role: str) -> str:
         "StateAdmin": "STATE_ADMIN",
         "CityAdmin": "CITY_ADMIN",
     }
-    return role_map.get(role, role)
+    return role_map.get(str(role or "").strip(), role)
 
 
 def build_patient_token(patient: Patient) -> str:
     claims = {
-        "sub": patient.patient_id,
+        "sub": clean_value(patient.patient_id),
         "role": "PATIENT",
-        "city": patient.city,
-        "branch_id": patient.home_branch_id,
+        "city": str(patient.city or "").strip(),
+        "branch_id": str(patient.home_branch_id or "").strip() or None,
     }
 
     return create_access_token(claims)
@@ -70,10 +74,10 @@ def build_patient_token(patient: Patient) -> str:
 
 def build_admin_token(admin: Admin) -> str:
     claims = {
-        "sub": admin.admin_id,
+        "sub": clean_value(admin.admin_id),
         "role": normalize_admin_role(admin.role),
-        "city": admin.city,
-        "branch_id": admin.branch_id,
+        "city": str(admin.city or "").strip() or None,
+        "branch_id": str(admin.branch_id or "").strip() or None,
     }
 
     return create_access_token(claims)
@@ -85,15 +89,21 @@ def get_user_by_token_claims(
     role: str
 ) -> Optional[Union[Patient, Admin]]:
 
-    if role == "PATIENT":
-        return (
-            db.query(Patient)
-            .filter(Patient.patient_id == sub)
-            .first()
-        )
+    sub_clean = clean_value(sub)
 
-    return (
-        db.query(Admin)
-        .filter(Admin.admin_id == sub)
-        .first()
-    )
+    if role == "PATIENT":
+        patients = db.query(Patient).all()
+
+        for patient in patients:
+            if clean_value(patient.patient_id) == sub_clean:
+                return patient
+
+        return None
+
+    admins = db.query(Admin).all()
+
+    for admin in admins:
+        if clean_value(admin.admin_id) == sub_clean:
+            return admin
+
+    return None
