@@ -1,6 +1,8 @@
 import enum
+
 from sqlalchemy import Column, String, Integer, Date, Enum, ForeignKey, DECIMAL, Boolean
 from sqlalchemy.orm import relationship
+
 from database import Base
 
 
@@ -21,6 +23,7 @@ class AdminRoleEnum(str, enum.Enum):
     SuperAdmin = "SuperAdmin"
     StateAdmin = "StateAdmin"
     CityAdmin = "CityAdmin"
+
 
 class Branch(Base):
     __tablename__ = "branches"
@@ -97,7 +100,9 @@ class Appointment(Base):
     department = Column(String(60))
     appointment_date = Column(Date, nullable=False)
     slot_time = Column(String(5), nullable=False)
-    status = Column(Enum(AppointmentStatusEnum))
+    token_number = Column(Integer)
+    estimated_wait_minutes = Column(Integer)
+    status = Column(String(20))
     consult_fee = Column(Integer)
     payment_mode = Column(String(20))
     booked_on = Column(Date)

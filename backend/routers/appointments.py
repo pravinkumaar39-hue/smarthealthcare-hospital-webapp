@@ -3,11 +3,10 @@ routers/appointments.py
 ========================
 Appointment booking and management API.
 
-Routes:
-    POST /appointments/                 -> Book appointment as PATIENT
-    GET  /appointments/me               -> Current patient's appointments
-    GET  /appointments/                  -> Admin appointment list
-    GET  /appointments/{appointment_id} -> Single appointment details
+Token logic:
+    - Same doctor + same date = one daily queue
+    - Same doctor + same date + same slot = slot capacity
+    - Same patient + same doctor + same date = duplicate blocked
 """
 
 from typing import List, Optional, Union
@@ -24,7 +23,8 @@ from dependencies import get_current_patient, get_current_admin, get_current_use
 
 router = APIRouter(prefix="/appointments", tags=["Appointments"])
 
-MAX_PATIENTS_PER_SLOT = 25
+MAX_PATIENTS_PER_SLOT = 6
+WAIT_MINUTES_PER_TOKEN = 5
 
 
 def clean_value(value) -> str:
@@ -73,7 +73,6 @@ def book_appointment(
 
     doctor_branch = clean_value(doctor.branch_id)
     payload_branch = clean_value(payload.branch_id)
-    patient_branch = clean_value(current_patient.home_branch_id)
 
     doctor_department = clean_value(doctor.department)
     payload_department = clean_value(payload.department)
@@ -90,13 +89,27 @@ def book_appointment(
             detail=f"Selected doctor belongs to {doctor.department}, not {payload.department}.",
         )
 
-    if patient_branch and patient_branch != payload_branch:
+    duplicate_appointment = (
+        db.query(Appointment)
+        .filter(
+            Appointment.patient_id == current_patient.patient_id,
+            Appointment.doctor_id == payload.doctor_id,
+            Appointment.appointment_date == payload.appointment_date,
+            Appointment.status != "Cancelled",
+        )
+        .first()
+    )
+
+    if duplicate_appointment:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"Patients can book appointments only in their home branch. Patient branch: {current_patient.home_branch_id}, selected branch: {payload.branch_id}",
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "You already have an appointment with this doctor on this date. "
+                f"Appointment ID: {duplicate_appointment.appointment_id}"
+            ),
         )
 
-    existing_count = (
+    slot_count = (
         db.query(func.count(Appointment.appointment_id))
         .filter(
             Appointment.doctor_id == payload.doctor_id,
@@ -107,11 +120,24 @@ def book_appointment(
         .scalar()
     )
 
-    if existing_count >= MAX_PATIENTS_PER_SLOT:
+    if slot_count >= MAX_PATIENTS_PER_SLOT:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="This slot is fully booked. Please choose another slot.",
+            detail=f"This slot is fully booked. Maximum {MAX_PATIENTS_PER_SLOT} patients allowed per slot.",
         )
+
+    day_count = (
+        db.query(func.count(Appointment.appointment_id))
+        .filter(
+            Appointment.doctor_id == payload.doctor_id,
+            Appointment.appointment_date == payload.appointment_date,
+            Appointment.status != "Cancelled",
+        )
+        .scalar()
+    )
+
+    token_number = day_count + 1
+    estimated_wait_minutes = (token_number - 1) * WAIT_MINUTES_PER_TOKEN
 
     appointment = Appointment(
         appointment_id=generate_appointment_id(db),
@@ -121,6 +147,8 @@ def book_appointment(
         department=doctor.department,
         appointment_date=payload.appointment_date,
         slot_time=payload.slot_time,
+        token_number=token_number,
+        estimated_wait_minutes=estimated_wait_minutes,
         status="Scheduled",
         consult_fee=doctor.consult_fee,
         payment_mode=payload.payment_mode or "Cash",
@@ -150,7 +178,7 @@ def get_my_appointments(
 
     appointments = (
         query
-        .order_by(Appointment.appointment_date.desc())
+        .order_by(Appointment.appointment_date.desc(), Appointment.token_number.asc())
         .all()
     )
 
@@ -190,7 +218,7 @@ def list_appointments(
 
     appointments = (
         query
-        .order_by(Appointment.appointment_date.desc())
+        .order_by(Appointment.appointment_date.desc(), Appointment.token_number.asc())
         .offset(skip)
         .limit(min(limit, 500))
         .all()

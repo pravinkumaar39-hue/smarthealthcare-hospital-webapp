@@ -125,10 +125,14 @@ class AppointmentOut(BaseModel):
     department: Optional[str] = None
     appointment_date: date
     slot_time: str
+    token_number: Optional[int] = None
+    estimated_wait_minutes: Optional[int] = None
     status: Optional[str] = None
     consult_fee: Optional[int] = None
     payment_mode: Optional[str] = None
     booked_on: Optional[date] = None
 
+    class Config:
+        from_attributes = True
     class Config:
         from_attributes = True
