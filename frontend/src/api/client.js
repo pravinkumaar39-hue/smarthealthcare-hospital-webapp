@@ -26,7 +26,10 @@ api.interceptors.response.use(
       localStorage.removeItem("sh_token");
       localStorage.removeItem("sh_user");
 
-      if (!window.location.pathname.startsWith("/login")) {
+      if (
+        !window.location.pathname.startsWith("/login") &&
+        !window.location.pathname.startsWith("/admin/login")
+      ) {
         window.location.href = "/login";
       }
     }
@@ -54,5 +57,23 @@ export const getCurrentUser = () => api.get("/auth/me");
 
 export const changePassword = (old_password, new_password) =>
   api.post("/auth/change-password", { old_password, new_password });
+
+export const getDoctors = (params = {}) =>
+  api.get("/doctors/", { params });
+
+export const getDepartments = (params = {}) =>
+  api.get("/doctors/departments", { params });
+
+export const getDoctorById = (doctorId) =>
+  api.get(`/doctors/${doctorId}`);
+
+export const getMyAppointments = () =>
+  api.get("/appointments/me");
+
+export const bookAppointment = (payload) =>
+  api.post("/appointments/", payload);
+
+export const getAdminAppointments = (params = {}) =>
+  api.get("/appointments/", { params });
 
 export default api;
