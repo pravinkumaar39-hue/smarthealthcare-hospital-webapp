@@ -1,28 +1,39 @@
+﻿backend/.env
+.env
+
+node_modules/
+frontend/node_modules/
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+dist/
+frontend/dist/
+
+*.zip
+*.log
+
+# Local secrets
+backend/.env
+.env
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+
 # Python
 __pycache__/
 *.pyc
 .venv/
 venv/
-env/
 
-# Environment files
-.env
-*.env
-
-# Node / React
-node_modules/
-dist/
-build/
-
-# Logs
+# Local backups
+*.backup*
+*.zip
 *.log
-
-# OS / editor
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# Database dumps / temporary backups
-*.sql.bak
-*.backup
+frontend/src/pages/Dashboards.jsx.backup*
+smarthealthcare_logo.png

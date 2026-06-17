@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import {
-  CreditCard,
-  Lock,
-  Smartphone,
-  KeyRound,
   ArrowRight,
+  CalendarPlus,
+  CheckCircle2,
+  Copy,
+  CreditCard,
+  HeartPulse,
+  KeyRound,
+  Lock,
+  Mail,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+  Smartphone,
+  Stethoscope,
   UserPlus,
+  Users,
 } from "lucide-react";
 
 import Logo from "../components/Logo";
@@ -18,8 +28,8 @@ import { loginPatient, loginOtp, registerWithOtp } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
 const TABS = [
-  { id: "otp", label: "Mobile + OTP", icon: Smartphone },
   { id: "patient", label: "Patient ID", icon: CreditCard },
+  { id: "otp", label: "Mobile + OTP", icon: Smartphone },
 ];
 
 const TN_CITIES = [
@@ -40,9 +50,19 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const loginCardRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { login, homeRouteForRole } = useAuth();
+
+  const scrollToLogin = () => {
+    setActiveTab("patient");
+    loginCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    setTimeout(() => {
+      document.getElementById("patient-id-input")?.focus();
+    }, 450);
+  };
 
   const redirectAfterLogin = (userInfo) => {
     if (userInfo.role === "PATIENT" && userInfo.must_change_password) {
@@ -55,130 +75,278 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-bg flex min-h-screen flex-col items-center justify-center px-4 py-10">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="z-10 mb-6 text-center"
-      >
-        <div className="mb-2 flex justify-center">
-          <Logo size="lg" />
-        </div>
-        <p className="font-medium text-primary-700/80">
-          SmartHealthcare Patient Portal
-        </p>
-        <p className="text-sm text-primary-600/70">
-          Book appointments, view doctors, and manage your care
-        </p>
-      </motion.div>
+    <div className="relative min-h-screen overflow-hidden bg-[#041b3d] px-4 py-5 text-white">
+      <img
+        src="/hospitals/chennai_hospital.png"
+        alt="SmartHealthcare Hospital"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-45"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#041b3d]/98 via-[#063b7a]/92 to-[#047857]/90" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(59,130,246,0.35),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(16,185,129,0.30),transparent_28%),radial-gradient(circle_at_55%_92%,rgba(6,182,212,0.20),transparent_32%)]" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="glass-card z-10 w-full max-w-md rounded-3xl p-6 sm:p-8"
-      >
-        <div className="mb-6 grid grid-cols-2 gap-1 rounded-xl bg-primary-50/80 p-1">
-          {TABS.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  setError("");
-                }}
-                className={`relative flex flex-col items-center gap-1 rounded-lg px-2 py-2 text-[11px] font-semibold transition-colors sm:text-xs ${
-                  isActive
-                    ? "text-primary-700"
-                    : "text-gray-500 hover:text-primary-600"
-                }`}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="tab-bg"
-                    className="absolute inset-0 rounded-lg bg-white shadow-sm"
-                    transition={{ type: "spring", duration: 0.4 }}
-                  />
-                )}
-                <Icon size={16} className="relative z-10" />
-                <span className="relative z-10">{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {error && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-            {error}
+      <div className="relative z-10 mx-auto min-h-[calc(100vh-40px)] max-w-[1540px] rounded-[2rem] border border-white/15 bg-white/[0.04] p-5 shadow-2xl shadow-black/30 backdrop-blur-[2px]">
+        <header className="mb-6 flex items-center justify-between gap-4">
+          <div className="rounded-3xl bg-white/95 px-5 py-3 shadow-xl ring-1 ring-white/60">
+            <Logo size="sm" compact />
           </div>
-        )}
 
-        <AnimatePresence mode="wait">
-          {activeTab === "otp" && (
-            <motion.div
-              key="otp"
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -12 }}
-              transition={{ duration: 0.25 }}
-            >
-              <OtpLoginForm
-                setError={setError}
-                loading={loading}
-                setLoading={setLoading}
-                onSuccess={(res) => redirectAfterLogin(login(res.data))}
-              />
-            </motion.div>
-          )}
-
-          {activeTab === "patient" && (
-            <motion.div
-              key="patient"
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -12 }}
-              transition={{ duration: 0.25 }}
-            >
-              <PatientIdLoginForm
-                setError={setError}
-                loading={loading}
-                setLoading={setLoading}
-                onSuccess={(res) => redirectAfterLogin(login(res.data))}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="mt-6 text-center text-sm text-gray-600">
-          New patient?{" "}
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-1 font-semibold text-primary-700 hover:underline"
+          <a
+            href="tel:9841012345"
+            className="hidden items-center gap-3 rounded-3xl border border-white/20 bg-white/15 px-5 py-3 text-sm font-black text-white shadow-lg backdrop-blur-xl transition hover:bg-white/20 sm:flex"
           >
-            <UserPlus size={14} />
-            Create an account
-          </Link>
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15 text-white">
+              <Phone size={19} />
+            </span>
+            <span>
+              <span className="block text-xs text-white/70">24/7 Helpdesk</span>
+              +91 98410 12345
+            </span>
+          </a>
+        </header>
 
-          <div className="mt-3 text-xs text-gray-500">
-            Hospital staff?{" "}
-            <Link
-              to="/admin/login"
-              className="font-semibold text-primary-700 hover:underline"
+        <main className="grid min-h-[760px] items-center gap-8 lg:grid-cols-[1.08fr_0.92fr]">
+          <section className="relative overflow-hidden rounded-[2.5rem] border border-white/15 bg-white/[0.08] p-7 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-10">
+            <div className="absolute inset-y-0 right-0 hidden w-[58%] overflow-hidden lg:block">
+              <img
+                src="/hospitals/chennai_hospital.png"
+                alt="SmartHealthcare Hospital"
+                className="h-full w-full object-cover opacity-75"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#041b3d] via-[#041b3d]/50 to-transparent" />
+            </div>
+
+            <div className="pointer-events-none absolute left-[52%] top-[14%] hidden h-24 w-24 rounded-[2rem] border border-white/10 bg-white/5 lg:block" />
+            <div className="pointer-events-none absolute left-[46%] top-[8%] hidden h-2 w-28 rounded-full bg-white/20 lg:block" />
+
+            <div className="relative max-w-2xl">
+              <p className="text-sm font-black uppercase tracking-[0.32em] text-cyan-200">
+                SmartHealthcare Patient Portal
+              </p>
+
+              <h1 className="mt-6 text-5xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl xl:text-7xl">
+                Welcome to <br />
+                <span className="text-blue-300">SmartHealthcare</span>
+                <br />
+                <span className="text-emerald-300">Hospital</span>
+              </h1>
+
+              <div className="mt-6 h-1.5 w-24 rounded-full bg-emerald-300" />
+
+              <p className="mt-6 text-xl font-black text-white">
+                Better Care. Better Health. Better Life.
+              </p>
+
+              <p className="mt-4 max-w-xl text-base font-medium leading-7 text-white/80">
+                Book trusted doctors, manage appointments, receive token details,
+                and access your hospital services in one smart digital portal.
+              </p>
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-4">
+                <FeatureIcon icon={ShieldCheck} title="Trusted Care" text="Secure patient access" tone="blue" />
+                <FeatureIcon icon={Phone} title="24/7 Support" text="Branch helpdesk" tone="green" />
+                <FeatureIcon icon={HeartPulse} title="Patient First" text="Care-first service" tone="red" />
+                <FeatureIcon icon={Stethoscope} title="Expert Doctors" text="Smart booking" tone="purple" />
+              </div>
+
+              <div className="mt-8 overflow-hidden rounded-[1.8rem] border border-white/15 bg-white/10 shadow-xl backdrop-blur-xl">
+                <div className="grid gap-4 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+                  <div className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-500 text-white shadow-lg shadow-blue-950/30">
+                    <CalendarPlus size={28} />
+                  </div>
+
+                  <div>
+                    <p className="text-base font-black text-white">
+                      Book an Appointment
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-white/75">
+                      Skip the wait. Login with Patient ID and book your slot in seconds.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={scrollToLogin}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-emerald-500 px-5 py-3.5 text-sm font-black text-white shadow-lg transition hover:scale-[1.02]"
+                  >
+                    Book Now
+                    <ArrowRight size={17} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-3 text-center sm:grid-cols-4">
+                <TrustStat value="1000+" label="Happy Patients" />
+                <TrustStat value="50+" label="Expert Doctors" />
+                <TrustStat value="10+" label="Specialties" />
+                <TrustStat value="10" label="TN Branches" />
+              </div>
+            </div>
+          </section>
+
+          <section ref={loginCardRef} className="space-y-5">
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="rounded-[2.3rem] border border-white/20 bg-white/10 p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-8"
             >
-              Go to Staff Portal
-            </Link>
-          </div>
-        </div>
-      </motion.div>
+              <div className="mb-7">
+                <h2 className="text-3xl font-black text-white">Patient Login</h2>
+                <div className="mt-3 h-1 w-16 rounded-full bg-emerald-300" />
+                <p className="mt-4 text-sm font-medium text-white/75">
+                  Login to continue appointment booking and manage your care.
+                </p>
+              </div>
 
-      <p className="z-10 mt-6 text-center text-xs text-primary-700/60">
-        © {new Date().getFullYear()} SmartHealthcare Hospital Network · Tamil Nadu
-      </p>
+              <div className="mb-6 grid grid-cols-2 gap-1 rounded-2xl border border-white/15 bg-white/10 p-1">
+                {TABS.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        setError("");
+                      }}
+                      className={`relative flex items-center justify-center gap-2 rounded-xl px-2 py-3 text-xs font-black transition-colors ${
+                        isActive
+                          ? "text-white"
+                          : "text-white/65 hover:text-white"
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="tab-bg"
+                          className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 shadow-sm"
+                          transition={{ type: "spring", duration: 0.4 }}
+                        />
+                      )}
+                      <Icon size={16} className="relative z-10" />
+                      <span className="relative z-10">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {error && (
+                <div className="mb-4 rounded-xl border border-red-300/30 bg-red-500/15 px-4 py-3 text-sm font-semibold text-red-100">
+                  {error}
+                </div>
+              )}
+
+              <div className="[&_label]:text-white/90 [&_input]:border-white/15 [&_input]:bg-white/95 [&_select]:bg-white">
+                <AnimatePresence mode="wait">
+                  {activeTab === "otp" && (
+                    <motion.div
+                      key="otp"
+                      initial={{ opacity: 0, x: 12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -12 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <OtpLoginForm
+                        setError={setError}
+                        loading={loading}
+                        setLoading={setLoading}
+                        onSuccess={(res) => redirectAfterLogin(login(res.data))}
+                      />
+                    </motion.div>
+                  )}
+
+                  {activeTab === "patient" && (
+                    <motion.div
+                      key="patient"
+                      initial={{ opacity: 0, x: 12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -12 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <PatientIdLoginForm
+                        setError={setError}
+                        loading={loading}
+                        setLoading={setLoading}
+                        onSuccess={(res) => redirectAfterLogin(login(res.data))}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="mt-7 text-center text-sm text-white/75">
+                New patient?{" "}
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-1 font-black text-emerald-200 hover:underline"
+                >
+                  <UserPlus size={14} />
+                  Create an account
+                </Link>
+
+                <div className="mt-3 text-xs text-white/60">
+                  Hospital staff?{" "}
+                  <Link
+                    to="/admin/login"
+                    className="font-black text-cyan-200 hover:underline"
+                  >
+                    Go to Staff Portal
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
+            <div className="rounded-[1.8rem] border border-emerald-200/20 bg-emerald-400/10 p-5 shadow-xl shadow-black/10 backdrop-blur-xl">
+              <div className="flex items-center gap-4">
+                <div className="grid h-14 w-14 place-items-center rounded-2xl bg-white/15 text-emerald-200 shadow-sm">
+                  <ShieldCheck size={28} />
+                </div>
+                <div>
+                  <p className="text-base font-black text-white">
+                    Your Health, Our Priority
+                  </p>
+                  <p className="mt-1 text-sm font-medium leading-6 text-white/75">
+                    Your data is secure with us. We follow privacy and safety-first healthcare practices.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <p className="relative z-10 mt-5 text-center text-xs font-medium text-white/55">
+          © {new Date().getFullYear()} SmartHealthcare Hospital · Tamil Nadu
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function FeatureIcon({ icon: Icon, title, text, tone }) {
+  const tones = {
+    blue: "bg-blue-50 text-blue-700",
+    green: "bg-emerald-50 text-emerald-600",
+    red: "bg-red-50 text-red-500",
+    purple: "bg-purple-50 text-purple-600",
+  };
+
+  return (
+    <div className="rounded-3xl bg-white/80 p-4 text-center shadow-sm ring-1 ring-blue-50">
+      <div className={`mx-auto grid h-14 w-14 place-items-center rounded-2xl ${tones[tone]}`}>
+        <Icon size={25} />
+      </div>
+      <p className="mt-3 text-sm font-black text-slate-950">{title}</p>
+      <p className="mt-1 text-xs font-medium leading-5 text-slate-500">{text}</p>
+    </div>
+  );
+}
+
+function TrustStat({ value, label }) {
+  return (
+    <div className="rounded-2xl bg-white/75 px-4 py-3 shadow-sm ring-1 ring-blue-50">
+      <p className="text-lg font-black text-blue-700">{value}</p>
+      <p className="text-xs font-semibold text-slate-500">{label}</p>
     </div>
   );
 }
@@ -210,9 +378,10 @@ function PatientIdLoginForm({ setError, loading, setLoading, onSuccess }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <FormInput
+        id="patient-id-input"
         label="Patient ID"
         icon={CreditCard}
-        placeholder="PTN0001"
+        placeholder="PTNC005"
         autoComplete="username"
         error={errors.patient_id?.message}
         {...register("patient_id", { required: "Patient ID is required" })}

@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database import engine, Base
 from routers import auth, patients, doctors, appointments, admin_dashboard
+from routers import ai_assistant
 
 # NOTE: Tables already exist in the `smarthealthcare` database (Module 1).
 # create_all() is a no-op for existing tables and safe to leave in place
@@ -45,6 +46,7 @@ app.include_router(patients.router)
 app.include_router(doctors.router)
 app.include_router(appointments.router)
 app.include_router(admin_dashboard.router)
+app.include_router(ai_assistant.router)
 
 # =========================================================
 # HEALTH CHECK

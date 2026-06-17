@@ -1,16 +1,48 @@
-import axios from "axios";
-
-const API_BASE_URL = "http://127.0.0.1:8000";
+﻿import axios from "axios";
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: "/api",
 });
 
+function getSavedToken() {
+  const directToken =
+    localStorage.getItem("token") ||
+    localStorage.getItem("access_token") ||
+    localStorage.getItem("authToken");
+
+  if (directToken) return directToken;
+
+  try {
+    const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
+    return authUser.token || authUser.access_token || "";
+  } catch {
+    return "";
+  }
+}
+
+function saveLoginData(data) {
+  if (!data) return;
+
+  const token = data.access_token || data.token;
+
+  if (token) {
+    localStorage.setItem("token", token);
+    localStorage.setItem("access_token", token);
+  }
+
+  if (data.role) {
+    localStorage.setItem("role", data.role);
+  }
+
+  if (data.user_id) {
+    localStorage.setItem("user_id", data.user_id);
+  }
+
+  localStorage.setItem("authUser", JSON.stringify(data));
+}
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("sh_token");
+  const token = getSavedToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -20,23 +52,39 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem("sh_token");
-      localStorage.removeItem("sh_user");
+  (response) => {
+    const url = response.config?.url || "";
 
-      if (
-        !window.location.pathname.startsWith("/login") &&
-        !window.location.pathname.startsWith("/admin/login")
-      ) {
-        window.location.href = "/login";
+    if (
+      url.includes("/auth/login/patient") ||
+      url.includes("/auth/login/admin") ||
+      url.includes("/auth/login/otp")
+    ) {
+      saveLoginData(response.data);
+    }
+
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      const url = error.config?.url || "";
+
+      if (!url.includes("/auth/login")) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        localStorage.removeItem("authUser");
+        localStorage.removeItem("user_id");
       }
     }
 
     return Promise.reject(error);
   }
 );
+
+export default api;
 
 export const loginPatient = (patient_id, password) =>
   api.post("/auth/login/patient", { patient_id, password });
@@ -76,4 +124,14 @@ export const bookAppointment = (payload) =>
 export const getAdminAppointments = (params = {}) =>
   api.get("/appointments/", { params });
 
-export default api;
+export const getAdminDashboardSummary = () =>
+  api.get("/admin/dashboard/summary");
+
+export const getCityAdminsMonitoring = () =>
+  api.get("/admin/dashboard/city-admins");
+
+export const askPatientAI = (question, context = "") =>
+  api.post("/ai/patient", { question, context });
+
+export const getAdminAIInsight = () =>
+  api.post("/ai/admin-insight");
