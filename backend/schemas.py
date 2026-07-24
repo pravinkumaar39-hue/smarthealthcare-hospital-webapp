@@ -89,6 +89,9 @@ class CurrentUserOut(BaseModel):
     blood_group: Optional[str] = None
     must_change_password: bool = False
 
+    age: Optional[int] = None
+    dob: Optional[date] = None
+    phone: Optional[str] = None
 
 class ChangePasswordRequest(BaseModel):
     old_password: str

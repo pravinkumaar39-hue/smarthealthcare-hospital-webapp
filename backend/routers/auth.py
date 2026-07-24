@@ -1,4 +1,4 @@
-from typing import Union
+﻿from typing import Union
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -66,11 +66,50 @@ def find_patient_by_phone(db: Session, phone: str):
     return None
 
 
-def generate_patient_id(db: Session) -> str:
-    count = db.query(Patient).count() + 1
+def generate_patient_id(db: Session, city: str, branch_id: str = None) -> str:
+    city_name = (city or "").strip()
+
+    city_prefixes = {
+        "Chennai": "PTNC",
+        "Trichy": "PTNT",
+        "Madurai": "PTNM",
+        "Coimbatore": "PTNCB",
+        "Thanjavur": "PTNTJ",
+        "Salem": "PTNS",
+        "Tirunelveli": "PTNTV",
+        "Erode": "PTNE",
+        "Vellore": "PTNV",
+        "Hosur": "PTNH",
+    }
+
+    prefix = city_prefixes.get(city_name, "PTN")
+
+    query = db.query(Patient)
+
+    if branch_id:
+        query = query.filter(Patient.home_branch_id == branch_id)
+    else:
+        query = query.filter(Patient.city == city_name)
+
+    patients = query.all()
+
+    max_number = 0
+
+    for patient in patients:
+        old_id = str(patient.patient_id or "").strip()
+
+        if not old_id.startswith(prefix):
+            continue
+
+        number_part = old_id.replace(prefix, "", 1)
+
+        if number_part.isdigit():
+            max_number = max(max_number, int(number_part))
+
+    next_number = max_number + 1
 
     while True:
-        new_id = f"PTN{count:09d}"
+        new_id = f"{prefix}{next_number:03d}"
 
         existing = (
             db.query(Patient)
@@ -81,7 +120,7 @@ def generate_patient_id(db: Session) -> str:
         if not existing:
             return new_id
 
-        count += 1
+        next_number += 1
 
 
 @router.post("/swagger-login")
@@ -205,7 +244,7 @@ def register_with_otp(payload: OTPRegisterRequest, db: Session = Depends(get_db)
         )
 
     new_patient = Patient(
-        patient_id=generate_patient_id(db),
+        patient_id=generate_patient_id(db, payload.city, branch.branch_id),
         first_name=payload.first_name,
         last_name=payload.last_name,
         gender=payload.gender,
@@ -281,7 +320,7 @@ def register_patient(payload: PatientRegisterRequest, db: Session = Depends(get_
         )
 
     new_patient = Patient(
-        patient_id=generate_patient_id(db),
+        patient_id=generate_patient_id(db, payload.city, branch.branch_id),
         first_name=payload.first_name,
         last_name=payload.last_name,
         gender=payload.gender,
@@ -305,26 +344,56 @@ def register_patient(payload: PatientRegisterRequest, db: Session = Depends(get_
     return new_patient
 
 
-@router.get("/me", response_model=CurrentUserOut)
+@router.get("/me")
 def get_me(current_user: Union[Patient, Admin] = Depends(get_current_user)):
-    if isinstance(current_user, Patient):
-        return CurrentUserOut(
-            user_id=current_user.patient_id,
-            role="PATIENT",
-            name=patient_full_name(current_user),
-            city=current_user.city,
-            branch_id=current_user.home_branch_id,
-            must_change_password=False,
-        )
+    def calculate_patient_age(dob_value):
+        if not dob_value:
+            return None
 
-    return CurrentUserOut(
-        user_id=current_user.admin_id,
-        role=normalize_admin_role(current_user.role),
-        name=current_user.name,
-        city=current_user.city,
-        branch_id=current_user.branch_id,
-        must_change_password=False,
-    )
+        try:
+            if isinstance(dob_value, str):
+                dob_value = date.fromisoformat(dob_value[:10])
+
+            today = date.today()
+
+            return (
+                today.year
+                - dob_value.year
+                - ((today.month, today.day) < (dob_value.month, dob_value.day))
+            )
+        except Exception:
+            return None
+
+    if isinstance(current_user, Patient):
+        patient_dob = getattr(current_user, "dob", None)
+
+        return {
+            "user_id": current_user.patient_id,
+            "patient_id": current_user.patient_id,
+            "role": "PATIENT",
+            "name": patient_full_name(current_user),
+            "first_name": getattr(current_user, "first_name", None),
+            "last_name": getattr(current_user, "last_name", None),
+            "gender": getattr(current_user, "gender", None),
+            "dob": str(patient_dob) if patient_dob else None,
+            "age": calculate_patient_age(patient_dob),
+            "blood_group": getattr(current_user, "blood_group", None),
+            "phone": getattr(current_user, "phone", None),
+            "email": getattr(current_user, "email", None),
+            "city": getattr(current_user, "city", None),
+            "branch_id": getattr(current_user, "home_branch_id", None),
+            "home_branch_id": getattr(current_user, "home_branch_id", None),
+            "must_change_password": False,
+        }
+
+    return {
+        "user_id": current_user.admin_id,
+        "role": normalize_admin_role(current_user.role),
+        "name": current_user.name,
+        "city": current_user.city,
+        "branch_id": current_user.branch_id,
+        "must_change_password": False,
+    }
 
 
 @router.post("/change-password", status_code=status.HTTP_200_OK)
@@ -335,3 +404,4 @@ def change_password(
     return {
         "message": "Password change is disabled in demo mode. Default password is Patient ID."
     }
+

@@ -481,6 +481,7 @@ function PatientLayout({ children, activeView, setActiveView, profile }) {
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "book", label: "Book Appointment", icon: CalendarPlus },
     { id: "appointments", label: "My Appointments", icon: CalendarCheck },
+      { id: "manage", label: "Manage Appointments", icon: CalendarCheck },
     { id: "ai", label: "AI Health Assistant", icon: Sparkles },
     { id: "summary", label: "Medical Summary", icon: FileText },
     { id: "branches", label: "Hospital Branches", icon: Building2 },
@@ -609,6 +610,7 @@ export function PatientDashboard() {
   const [booking, setBooking] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [bookingConfirmation, setBookingConfirmation] = useState(null);
 
   const selectedDoctor = useMemo(() => doctors.find((doctor) => doctor.doctor_id === selectedDoctorId), [doctors, selectedDoctorId]);
   const upcomingAppointment = useMemo(() => getUpcomingAppointment(appointments), [appointments]);
@@ -709,6 +711,7 @@ export function PatientDashboard() {
     event.preventDefault();
     setError("");
     setSuccess("");
+    setBookingConfirmation(null);
     if (!selectedDoctor) {
       setError("Please select a doctor.");
       return;
@@ -724,7 +727,41 @@ export function PatientDashboard() {
         payment_mode: paymentMode,
       };
       const res = await bookAppointment(payload);
-      setSuccess(`Appointment booked successfully. Token ${res.data.token_number}, estimated wait ${res.data.estimated_wait_minutes} mins.`);
+
+      const doctorName = `Dr. ${selectedDoctor.first_name || ""} ${selectedDoctor.last_name || ""}`.trim();
+      const patientName = profile?.name || user?.name || "Patient";
+      const patientId =
+        profile?.user_id ||
+        profile?.patient_id ||
+        user?.user_id ||
+        user?.patient_id ||
+        "Patient ID";
+
+      const branchName = profile?.city
+        ? `SmartHealthcare ${profile.city}`
+        : `Branch ${selectedDoctor.branch_id}`;
+
+      const confirmationDetails = {
+        patientName,
+        patientId,
+        patientPhone: profile?.phone || user?.phone || "",
+        doctorName: doctorName === "Dr." ? `Doctor ${selectedDoctor.doctor_id}` : doctorName,
+        department: selectedDoctor.department,
+        branchName,
+        appointmentDate,
+        slotTime,
+        tokenNumber: res.data.token_number,
+        estimatedWaitMinutes: res.data.estimated_wait_minutes,
+        appointmentId: res.data.appointment_id,
+        paymentMode,
+      };
+
+      setBookingConfirmation(confirmationDetails);
+
+      setSuccess(
+        `Appointment booked successfully. Token ${res.data.token_number}, estimated wait ${res.data.estimated_wait_minutes} mins.`
+      );
+
       await loadDashboardData();
       setActiveView("dashboard");
     } catch (err) {
@@ -738,9 +775,21 @@ export function PatientDashboard() {
     <PatientLayout activeView={activeView} setActiveView={setActiveView} profile={profile}>
       {error && <div className="mb-6 rounded-2xl border border-red-100 bg-red-50 px-6 py-4 text-sm font-bold text-red-700">{error}</div>}
       {success && <div className="mb-6 rounded-2xl border border-emerald-100 bg-emerald-50 px-6 py-4 text-sm font-bold text-emerald-700">{success}</div>}
+      {bookingConfirmation && (
+        <BookingWhatsAppCard details={bookingConfirmation} />
+      )}
+
       {activeView === "dashboard" && <DashboardHome profile={profile} loading={loading} doctors={doctors} appointments={appointments} upcomingAppointment={upcomingAppointment} setActiveView={setActiveView} />}
       {activeView === "book" && <BookAppointmentView doctors={doctors} selectedDoctorId={selectedDoctorId} setSelectedDoctorId={setSelectedDoctorId} selectedDoctor={selectedDoctor} appointmentDate={appointmentDate} setAppointmentDate={setAppointmentDate} slotTime={slotTime} setSlotTime={setSlotTime} paymentMode={paymentMode} setPaymentMode={setPaymentMode} booking={booking} handleBookAppointment={handleBookAppointment} loading={loading} />}
       {activeView === "appointments" && <AppointmentsView appointments={appointments} doctors={doctors} />}
+      {activeView === "manage" && (
+        <ManageAppointmentsView
+          appointments={appointments}
+          doctors={doctors}
+          profile={profile}
+          onRefresh={loadDashboardData}
+        />
+      )}
       {activeView === "ai" && <AIHealthAssistantView />}
       {activeView === "summary" && <MedicalSummaryView user={profile} appointments={appointments} />}
       {activeView === "branches" && <BranchesView user={profile} />}
@@ -748,6 +797,205 @@ export function PatientDashboard() {
     </PatientLayout>
   );
 }
+
+
+function normalizeIndianMobileNumber(mobileNumber) {
+  const rawPhone = String(mobileNumber || "").replace(/\D/g, "");
+
+  if (!rawPhone || rawPhone.length < 10) {
+    return null;
+  }
+
+  return `91${rawPhone.slice(-10)}`;
+}
+
+function buildBookingConfirmationMessage(details) {
+  const messageLines = [
+    `Hello ${details.patientName},`,
+    "",
+    "Your SmartHealthcare appointment has been booked successfully.",
+    "",
+    `Patient ID: ${details.patientId}`,
+    `Doctor: ${details.doctorName}`,
+    `Department: ${details.department}`,
+    `Branch: ${details.branchName}`,
+    `Date: ${formatDate(details.appointmentDate)}`,
+    `Time: ${formatTime(details.slotTime)}`,
+    `Token No: ${details.tokenNumber || "--"}`,
+    `Estimated Wait Time: ${details.estimatedWaitMinutes ?? "--"} minutes`,
+    "",
+    "Please arrive 10 minutes early and carry your Patient ID.",
+    "",
+    "Thank you for choosing SmartHealthcare.",
+    "Your care journey is safe, smooth, and supported with us.",
+    "",
+    "For any help, please contact the SmartHealthcare support team.",
+    "",
+    "Smart Care. Better Health. Better Life.",
+  ];
+
+  return messageLines.join(String.fromCharCode(10));
+}
+
+function openBookingConfirmationWhatsApp(details, mobileNumber) {
+  const phone = normalizeIndianMobileNumber(mobileNumber || details.patientPhone);
+
+  if (!phone) {
+    alert("Please enter a valid 10-digit WhatsApp mobile number.");
+    return;
+  }
+
+  const message = buildBookingConfirmationMessage(details);
+  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+}
+
+function openBookingConfirmationSms(details, mobileNumber) {
+  const phone = normalizeIndianMobileNumber(mobileNumber || details.patientPhone);
+
+  if (!phone) {
+    alert("Please enter a valid 10-digit mobile number.");
+    return;
+  }
+
+  const message = buildBookingConfirmationMessage(details);
+  const smsUrl = `sms:+${phone}?&body=${encodeURIComponent(message)}`;
+
+  window.location.href = smsUrl;
+}
+
+function BookingWhatsAppCard({ details }) {
+  const initialPhone = String(details.patientPhone || "").replace(/\D/g, "").slice(-10);
+  const [mobileNumber, setMobileNumber] = useState(initialPhone);
+  const [copied, setCopied] = useState(false);
+
+  const copyBookingMessage = async () => {
+    const message = buildBookingConfirmationMessage(details);
+
+    try {
+      await navigator.clipboard.writeText(message);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      alert("Copy failed. Please select and copy the message manually.");
+    }
+  };
+
+  return (
+    <div className="mb-6 rounded-[2rem] border border-emerald-100 bg-white p-6 shadow-[0_18px_55px_rgba(15,73,150,0.12)]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-600">
+            Appointment Confirmed
+          </p>
+
+          <h3 className="mt-2 text-2xl font-black text-[#101735]">
+            Booking confirmation ready
+          </h3>
+
+          <p className="mt-2 text-sm font-semibold text-slate-500">
+            Copy the confirmation message or send it through WhatsApp/SMS demo mode.
+          </p>
+
+          <div className="mt-5 grid gap-3 text-sm font-bold text-slate-600 sm:grid-cols-2">
+            <p>
+              <span className="text-slate-400">Patient:</span> {details.patientName}
+            </p>
+            <p>
+              <span className="text-slate-400">Patient ID:</span> {details.patientId}
+            </p>
+            <p>
+              <span className="text-slate-400">Doctor:</span> {details.doctorName}
+            </p>
+            <p>
+              <span className="text-slate-400">Department:</span> {details.department}
+            </p>
+            <p>
+              <span className="text-slate-400">Branch:</span> {details.branchName}
+            </p>
+            <p>
+              <span className="text-slate-400">Date:</span> {formatDate(details.appointmentDate)}
+            </p>
+            <p>
+              <span className="text-slate-400">Time:</span> {formatTime(details.slotTime)}
+            </p>
+            <p>
+              <span className="text-slate-400">Token:</span> {details.tokenNumber || "--"}
+            </p>
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+            <p className="text-xs font-black uppercase tracking-widest text-blue-700">
+              Message Preview
+            </p>
+            <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-xl bg-white p-4 text-xs font-semibold leading-6 text-slate-700">
+{buildBookingConfirmationMessage(details)}
+            </pre>
+          </div>
+        </div>
+
+        <div className="rounded-[1.6rem] border border-emerald-100 bg-emerald-50/80 p-5">
+          <label className="text-xs font-black uppercase tracking-widest text-emerald-700">
+            Patient Mobile Number
+          </label>
+
+          <input
+            type="text"
+            value={mobileNumber}
+            onChange={(event) =>
+              setMobileNumber(event.target.value.replace(/\D/g, "").slice(0, 10))
+            }
+            placeholder="Enter 10-digit mobile number"
+            className="mt-3 w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm font-black text-slate-800 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+          />
+
+          <button
+            type="button"
+            onClick={copyBookingMessage}
+            className="mt-4 w-full rounded-2xl border border-blue-200 bg-white px-5 py-3.5 text-sm font-black text-blue-700 shadow-sm hover:bg-blue-50"
+          >
+            Copy Booking Confirmation Message
+          </button>
+
+          {copied && (
+            <p className="mt-2 rounded-xl bg-blue-100 px-3 py-2 text-xs font-black text-blue-700">
+              Message copied successfully.
+            </p>
+          )}
+
+          <button
+            type="button"
+            onClick={() => openBookingConfirmationWhatsApp(details, mobileNumber)}
+            className="mt-4 w-full rounded-2xl bg-emerald-600 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700"
+          >
+            Send on WhatsApp
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openBookingConfirmationSms(details, mobileNumber)}
+            className="mt-3 w-full rounded-2xl border border-emerald-200 bg-white px-5 py-3.5 text-sm font-black text-emerald-700 hover:bg-emerald-50"
+          >
+            Send via SMS Demo
+          </button>
+
+          <a
+            href="tel:+919842012345"
+            className="mt-3 block w-full rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-center text-sm font-black text-slate-700 hover:bg-slate-50"
+          >
+            Call Support Team
+          </a>
+
+          <p className="mt-4 text-xs font-semibold leading-5 text-emerald-800/80">
+            Demo mode: WhatsApp/SMS opens with a ready message. In production, this can be automated using WhatsApp Business API or SMS Gateway API.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function DashboardHome({ profile, loading, doctors, appointments, upcomingAppointment, setActiveView }) {
   const recent = getRecentAppointments(appointments);
@@ -757,7 +1005,7 @@ function DashboardHome({ profile, loading, doctors, appointments, upcomingAppoin
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         <AppointmentCard profile={profile} loading={loading} appointment={upcomingAppointment} doctor={upcomingDoctor} doctors={doctors} setActiveView={setActiveView} />
         <TokenCard appointment={upcomingAppointment} />
-        <HealthSummaryCard setActiveView={setActiveView} />
+        <HealthSummaryCard profile={profile} setActiveView={setActiveView} />
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         <RecentAppointments appointments={recent} doctors={doctors} setActiveView={setActiveView} />
@@ -832,15 +1080,81 @@ function TokenCard({ appointment }) {
   );
 }
 
-function HealthSummaryCard({ setActiveView }) {
+function HealthSummaryCard({ profile, setActiveView }) {
+  const bloodGroup =
+    profile?.blood_group ||
+    profile?.bloodGroup ||
+    "Not Added";
+
+  const ageValue =
+    profile?.age ??
+    profile?.patient_age ??
+    calculateAgeFromDob(profile?.dob);
+
+  const displayAge =
+    ageValue === null || ageValue === undefined || ageValue === ""
+      ? "Not Added"
+      : ageValue;
+
   return (
     <GlassCard className="min-h-[300px]">
-      <div className="flex items-start justify-between"><div><p className="text-xs uppercase tracking-widest text-slate-400">Health Summary</p><h3 className="mt-1 text-lg font-black">Personal vitals snapshot</h3></div><div className="grid h-10 w-10 place-items-center rounded-xl bg-red-50 text-red-500"><Heart className="h-5 w-5" fill="currentColor" /></div></div>
-      <div className="mt-5 grid grid-cols-2 gap-4"><div className="rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 p-4 text-white shadow-md"><p className="text-xs uppercase tracking-wider text-white/80">Blood Group</p><p className="mt-1 text-4xl font-black">B+</p><p className="mt-1 text-xs text-white/80">Demo profile</p></div><div className="rounded-2xl bg-blue-50 p-4"><p className="text-xs uppercase tracking-wider text-slate-500">Age</p><p className="mt-1 bg-gradient-to-r from-blue-700 to-cyan-500 bg-clip-text text-4xl font-black text-transparent">35</p><p className="mt-1 text-xs text-slate-500">Years</p></div></div>
-      <button onClick={() => setActiveView("profile")} className="mt-6 inline-flex items-center gap-2 text-sm font-black text-blue-700"><User className="h-4 w-4" />View Profile <ChevronRight className="h-4 w-4" /></button>
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-slate-400">
+            Health Summary
+          </p>
+          <h3 className="mt-1 text-lg font-black">
+            Personal vitals snapshot
+          </h3>
+        </div>
+
+        <div className="grid h-10 w-10 place-items-center rounded-xl bg-red-50 text-red-500">
+          <Heart className="h-5 w-5" fill="currentColor" />
+        </div>
+      </div>
+
+      <div className="mt-5 grid grid-cols-2 gap-4">
+        <div className="rounded-2xl bg-gradient-to-br from-red-500 to-pink-500 p-4 text-white shadow-md">
+          <p className="text-xs uppercase tracking-wider text-white/80">
+            Blood Group
+          </p>
+
+          <p className="mt-1 text-4xl font-black">
+            {bloodGroup}
+          </p>
+
+          <p className="mt-1 text-xs text-white/80">
+            Patient profile
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-blue-50 p-4">
+          <p className="text-xs uppercase tracking-wider text-slate-500">
+            Age
+          </p>
+
+          <p className="mt-1 bg-gradient-to-r from-blue-700 to-cyan-500 bg-clip-text text-4xl font-black text-transparent">
+            {displayAge}
+          </p>
+
+          <p className="mt-1 text-xs text-slate-500">
+            Years
+          </p>
+        </div>
+      </div>
+
+      <button
+        onClick={() => setActiveView("profile")}
+        className="mt-6 inline-flex items-center gap-2 text-sm font-black text-blue-700"
+      >
+        <User className="h-4 w-4" />
+        View Profile
+        <ChevronRight className="h-4 w-4" />
+      </button>
     </GlassCard>
   );
 }
+
 
 function RecentAppointments({ appointments, doctors, setActiveView }) {
   return (
@@ -1278,6 +1592,382 @@ function BookAppointmentView({
 function AppointmentsView({ appointments, doctors }) {
   return <GlassCard><h2 className="text-2xl font-black text-[#101735]">My Appointments</h2><div className="mt-6 overflow-hidden rounded-3xl border border-blue-100"><div className="overflow-x-auto"><table className="w-full min-w-[980px] text-left text-sm"><thead className="bg-blue-50 text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-5 py-4">Appointment ID</th><th className="px-5 py-4">Doctor</th><th className="px-5 py-4">Department</th><th className="px-5 py-4">Date</th><th className="px-5 py-4">Slot</th><th className="px-5 py-4">Token</th><th className="px-5 py-4">Wait</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Fee</th></tr></thead><tbody className="divide-y divide-blue-50 bg-white">{appointments.map((a) => { const doctor = getDoctorForAppointment(doctors, a); return <tr key={a.appointment_id}><td className="px-5 py-4 font-black text-[#101735]">{a.appointment_id}</td><td className="px-5 py-4 font-semibold text-slate-600">{doctorTitle(doctor, a.doctor_id)}</td><td className="px-5 py-4 text-slate-600">{a.department}</td><td className="px-5 py-4 text-slate-600">{a.appointment_date}</td><td className="px-5 py-4 text-slate-600">{formatTime(a.slot_time)}</td><td className="px-5 py-4 text-lg font-black text-blue-700">{a.token_number || "--"}</td><td className="px-5 py-4 text-slate-600">{a.estimated_wait_minutes ?? "--"} mins</td><td className="px-5 py-4"><span className={`rounded-full px-4 py-2 text-xs font-black ${getStatusClass(a.status)}`}>{a.status}</span></td><td className="px-5 py-4 font-black text-slate-700">Rs. {a.consult_fee || 0}</td></tr>; })}</tbody></table></div></div></GlassCard>;
 }
+
+
+const MANAGE_APPOINTMENT_SLOTS = [
+  "09:00",
+  "09:30",
+  "10:00",
+  "10:30",
+  "11:00",
+  "11:30",
+  "12:00",
+  "15:00",
+  "15:30",
+  "16:00",
+  "16:30",
+  "17:00",
+];
+
+function getPatientTokenForRequest() {
+  const direct =
+    localStorage.getItem("token") ||
+    localStorage.getItem("access_token") ||
+    localStorage.getItem("sh_token") ||
+    localStorage.getItem("authToken") ||
+    "";
+
+  if (direct) return direct;
+
+  try {
+    const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
+    return authUser.access_token || authUser.token || "";
+  } catch {
+    return "";
+  }
+}
+
+function ManageAppointmentsView({ appointments, doctors, profile, onRefresh }) {
+  const activeAppointments = appointments.filter(
+    (item) => String(item.status || "").toLowerCase() !== "cancelled"
+  );
+
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(
+    activeAppointments[0]?.appointment_id || ""
+  );
+  const [newDate, setNewDate] = useState(todayDate());
+  const [newSlot, setNewSlot] = useState("10:00");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [working, setWorking] = useState(false);
+
+  const selectedAppointment =
+    activeAppointments.find((item) => item.appointment_id === selectedAppointmentId) ||
+    activeAppointments[0];
+
+  const selectedDoctor = selectedAppointment
+    ? getDoctorForAppointment(doctors, selectedAppointment)
+    : null;
+
+  const supportBranch =
+    BRANCHES.find((branch) => branch.id === profile?.branch_id) ||
+    BRANCHES.find((branch) => branch.id === profile?.home_branch_id) ||
+    BRANCHES.find((branch) => branch.city === profile?.city);
+
+  const supportPhone = supportBranch?.phone || "9842012345";
+
+  const callApi = async (url, options = {}) => {
+    const token = getPatientTokenForRequest();
+
+    if (!token) {
+      throw new Error("Login token not found. Please logout and login again.");
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(options.headers || {}),
+      },
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data?.detail || "Request failed.");
+    }
+
+    return data;
+  };
+
+  const checkAvailability = async () => {
+    if (!selectedAppointment) {
+      setError("Please select an appointment first.");
+      return;
+    }
+
+    setWorking(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const params = new URLSearchParams({
+        doctor_id: selectedAppointment.doctor_id,
+        appointment_date: newDate,
+        slot_time: newSlot,
+      });
+
+      const data = await callApi(
+        `http://127.0.0.1:8000/appointments/availability/check?${params.toString()}`
+      );
+
+      setMessage(
+        data.available
+          ? `Slot available. ${data.available_slots} slot(s) left for ${formatDate(newDate)} at ${formatTime(newSlot)}.`
+          : "Slot unavailable. Please choose another slot or call support."
+      );
+    } catch (err) {
+      setError(err.message || "Unable to check slot availability.");
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const rescheduleAppointment = async () => {
+    if (!selectedAppointment) {
+      setError("Please select an appointment first.");
+      return;
+    }
+
+    setWorking(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const params = new URLSearchParams({
+        new_date: newDate,
+        new_slot_time: newSlot,
+      });
+
+      await callApi(
+        `http://127.0.0.1:8000/appointments/${selectedAppointment.appointment_id}/reschedule?${params.toString()}`,
+        { method: "PATCH" }
+      );
+
+      setMessage("Appointment rescheduled successfully.");
+      await onRefresh();
+    } catch (err) {
+      setError(err.message || "Unable to reschedule appointment.");
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const cancelAppointment = async () => {
+    if (!selectedAppointment) {
+      setError("Please select an appointment first.");
+      return;
+    }
+
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this appointment?"
+    );
+
+    if (!confirmCancel) return;
+
+    setWorking(true);
+    setError("");
+    setMessage("");
+
+    try {
+      await callApi(
+        `http://127.0.0.1:8000/appointments/${selectedAppointment.appointment_id}/cancel`,
+        { method: "PATCH" }
+      );
+
+      setMessage("Appointment cancelled successfully.");
+      await onRefresh();
+    } catch (err) {
+      setError(err.message || "Unable to cancel appointment.");
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  return (
+    <div className="grid gap-7 xl:grid-cols-[1fr_420px]">
+      <GlassCard>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-600">
+              Appointment Management
+            </p>
+            <h2 className="mt-2 text-3xl font-black text-[#101735]">
+              Manage Appointments
+            </h2>
+            <p className="mt-2 text-sm font-semibold text-slate-500">
+              Cancel or reschedule your upcoming appointments. Rescheduling is allowed only if the selected slot is available.
+            </p>
+          </div>
+
+          <a
+            href={`tel:${supportPhone}`}
+            className="rounded-2xl border border-blue-100 bg-blue-50 px-5 py-3 text-sm font-black text-blue-700 hover:bg-blue-100"
+          >
+            Call Support Team
+          </a>
+        </div>
+
+        {error && (
+          <div className="mt-5 rounded-2xl border border-red-100 bg-red-50 px-5 py-4 text-sm font-black text-red-700">
+            {error}
+          </div>
+        )}
+
+        {message && (
+          <div className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-sm font-black text-emerald-700">
+            {message}
+          </div>
+        )}
+
+        {activeAppointments.length === 0 ? (
+          <div className="mt-6 rounded-3xl border border-dashed border-blue-100 bg-white/70 p-10 text-center">
+            <p className="text-lg font-black text-[#101735]">No active appointments found.</p>
+            <p className="mt-2 text-sm font-semibold text-slate-500">
+              Book an appointment first to manage or reschedule it.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4">
+            {activeAppointments.map((appointment) => {
+              const doctor = getDoctorForAppointment(doctors, appointment);
+              const active = selectedAppointmentId === appointment.appointment_id;
+
+              return (
+                <button
+                  key={appointment.appointment_id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedAppointmentId(appointment.appointment_id);
+                    setNewDate(appointment.appointment_date || todayDate());
+                    setNewSlot(appointment.slot_time || "10:00");
+                    setMessage("");
+                    setError("");
+                  }}
+                  className={`rounded-3xl border p-5 text-left transition ${
+                    active
+                      ? "border-blue-400 bg-blue-50 shadow-lg shadow-blue-100"
+                      : "border-blue-100 bg-white/80 hover:border-blue-300"
+                  }`}
+                >
+                  <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-widest text-slate-400">
+                        {appointment.appointment_id}
+                      </p>
+                      <h3 className="mt-1 text-xl font-black text-[#101735]">
+                        {doctorTitle(doctor, appointment.doctor_id)}
+                      </h3>
+                      <p className="mt-1 text-sm font-semibold text-slate-500">
+                        {appointment.department} · {formatDate(appointment.appointment_date)} · {formatTime(appointment.slot_time)}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <span className={`rounded-full px-4 py-2 text-xs font-black ${getStatusClass(appointment.status)}`}>
+                        {appointment.status}
+                      </span>
+                      <span className="rounded-full bg-blue-100 px-4 py-2 text-xs font-black text-blue-700">
+                        Token {appointment.token_number || "--"}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </GlassCard>
+
+      <GlassCard>
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-600">
+          Modify Selected Appointment
+        </p>
+
+        <h3 className="mt-2 text-2xl font-black text-[#101735]">
+          Change date or slot
+        </h3>
+
+        {!selectedAppointment ? (
+          <p className="mt-5 rounded-2xl bg-slate-50 p-5 text-sm font-semibold text-slate-500">
+            Select an appointment to modify.
+          </p>
+        ) : (
+          <>
+            <div className="mt-5 rounded-3xl border border-blue-100 bg-blue-50 p-4">
+              <p className="text-sm font-black text-[#101735]">
+                {doctorTitle(selectedDoctor, selectedAppointment.doctor_id)}
+              </p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">
+                Current: {formatDate(selectedAppointment.appointment_date)} at {formatTime(selectedAppointment.slot_time)}
+              </p>
+            </div>
+
+            <div className="mt-5 space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-black text-slate-700">
+                  New Appointment Date
+                </label>
+                <input
+                  type="date"
+                  value={newDate}
+                  onChange={(event) => setNewDate(event.target.value)}
+                  className="w-full rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-black text-slate-700 outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-black text-slate-700">
+                  New Slot
+                </label>
+                <select
+                  value={newSlot}
+                  onChange={(event) => setNewSlot(event.target.value)}
+                  className="w-full rounded-2xl border border-blue-100 bg-white px-4 py-3 text-sm font-black text-slate-700 outline-none focus:border-blue-500"
+                >
+                  {MANAGE_APPOINTMENT_SLOTS.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {formatTime(slot)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="button"
+                disabled={working}
+                onClick={checkAvailability}
+                className="w-full rounded-2xl border border-blue-200 bg-blue-50 px-5 py-3.5 text-sm font-black text-blue-700 hover:bg-blue-100 disabled:opacity-60"
+              >
+                Check Slot Availability
+              </button>
+
+              <button
+                type="button"
+                disabled={working}
+                onClick={rescheduleAppointment}
+                className="w-full rounded-2xl bg-emerald-600 px-5 py-3.5 text-sm font-black text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700 disabled:opacity-60"
+              >
+                Modify Date / Slot
+              </button>
+
+              <button
+                type="button"
+                disabled={working}
+                onClick={cancelAppointment}
+                className="w-full rounded-2xl border border-red-200 bg-red-50 px-5 py-3.5 text-sm font-black text-red-700 hover:bg-red-100 disabled:opacity-60"
+              >
+                Cancel Appointment
+              </button>
+
+              <a
+                href={`tel:${supportPhone}`}
+                className="block w-full rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-center text-sm font-black text-slate-700 hover:bg-slate-50"
+              >
+                Call Support for Further Questions
+              </a>
+            </div>
+
+            <p className="mt-5 rounded-2xl bg-amber-50 p-4 text-xs font-bold leading-5 text-amber-800">
+              Note: Slot modification works only when the selected doctor has available capacity. If unavailable, please choose another slot or contact support.
+            </p>
+          </>
+        )}
+      </GlassCard>
+    </div>
+  );
+}
+
 
 function AIHealthAssistantView() {
   const [question, setQuestion] = useState("");
@@ -1746,6 +2436,7 @@ function AdminDashboard({ mode = "city" }) {
     ? [
         { id: "overview", label: "TN Overview", icon: Home },
         { id: "analytics", label: "Analytics", icon: TrendingUp },
+        { id: "executive", label: "Executive Snapshot", icon: Sparkles },
         { id: "admins", label: "City Admins", icon: ShieldCheck },
         { id: "branches", label: "All Branches", icon: Building2 },
         { id: "appointments", label: "Appointments", icon: CalendarDays },
@@ -1963,6 +2654,13 @@ function AdminDashboard({ mode = "city" }) {
               />
             )}
 
+            {activeView === "executive" && isSuper && (
+              <ExecutiveSnapshotView
+                doctors={doctors}
+                appointments={appointments}
+              />
+            )}
+
             {activeView === "analytics" && isSuper && (
               <SuperAdminAnalyticsView
                 doctors={doctors}
@@ -2006,6 +2704,434 @@ function AdminDashboard({ mode = "city" }) {
           </div>
         </main>
       </div>
+    </div>
+  );
+}
+
+
+function ExecutiveSnapshotView({ doctors = [], appointments = [] }) {
+  const [copied, setCopied] = useState(false);
+
+  const todayItems = appointments.filter(isTodayAppointment);
+
+  const totalRevenue = appointments.reduce(
+    (sum, item) => sum + Number(item.consult_fee || 0),
+    0
+  );
+
+  const todayRevenue = todayItems.reduce(
+    (sum, item) => sum + Number(item.consult_fee || 0),
+    0
+  );
+
+  const activeDoctors = doctors.filter((doctor) => {
+    const value = doctor.active ?? doctor.is_active ?? doctor.status;
+    if (typeof value === "boolean") return value;
+    return String(value || "").toLowerCase() !== "inactive";
+  });
+
+  const branchAnalytics = BRANCHES.map((branch) => {
+    const branchAppointments = appointments.filter((item) => {
+      const itemBranch = String(item.branch_id || "").trim();
+      const itemCity = String(item.city || "").trim();
+      return itemBranch === branch.id || itemCity === branch.city;
+    });
+
+    const branchTodayAppointments = todayItems.filter((item) => {
+      const itemBranch = String(item.branch_id || "").trim();
+      const itemCity = String(item.city || "").trim();
+      return itemBranch === branch.id || itemCity === branch.city;
+    });
+
+    const branchDoctors = doctors.filter((doctor) => {
+      const doctorBranch = String(doctor.branch_id || "").trim();
+      const doctorCity = String(doctor.city || "").trim();
+      return doctorBranch === branch.id || doctorCity === branch.city;
+    });
+
+    const revenue = branchAppointments.reduce(
+      (sum, item) => sum + Number(item.consult_fee || 0),
+      0
+    );
+
+    return {
+      ...branch,
+      appointments: branchAppointments.length,
+      todayAppointments: branchTodayAppointments.length,
+      doctors: branchDoctors.length,
+      revenue,
+    };
+  });
+
+  const rankedBranches = [...branchAnalytics].sort(
+    (a, b) => b.appointments - a.appointments
+  );
+
+  const topBranch = rankedBranches[0] || BRANCHES[0];
+
+  const departmentAnalytics = Object.entries(
+    appointments.reduce((acc, item) => {
+      const department = item.department || "General";
+      acc[department] = (acc[department] || 0) + 1;
+      return acc;
+    }, {})
+  )
+    .map(([department, count]) => ({ department, count }))
+    .sort((a, b) => b.count - a.count);
+
+  const highDemandDepartment =
+    departmentAnalytics[0]?.department || "General";
+
+  const doctorWorkload = doctors
+    .map((doctor) => {
+      const count = appointments.filter(
+        (item) => item.doctor_id === doctor.doctor_id
+      ).length;
+
+      return {
+        doctor,
+        count,
+      };
+    })
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  const activeCityAdmins = CITY_ADMINS.filter(
+    (admin) => admin.status === "Active"
+  );
+
+  const executiveMessage = `SmartHealthcare Executive Snapshot
+
+Audience: CEO / HR / Hospital Leadership
+Access Type: Read-only management view
+Data Privacy: No patient personal data shown
+
+Network Summary:
+Total Branches: ${BRANCHES.length}
+Total Doctors: ${doctors.length}
+Active Doctors: ${activeDoctors.length}
+Total Appointments: ${appointments.length}
+Today Appointments: ${todayItems.length}
+Total Revenue: Rs. ${totalRevenue.toLocaleString("en-IN")}
+Today Revenue: Rs. ${todayRevenue.toLocaleString("en-IN")}
+
+Performance Summary:
+Top Branch: ${topBranch.city}
+High Demand Department: ${highDemandDepartment}
+Active City Admins: ${activeCityAdmins.length}/${CITY_ADMINS.length}
+
+Management Note:
+SmartHealthcare is operating with a patient-first digital workflow covering registration, appointment booking, token queue, booking confirmation, appointment management, AI assistance, city admin monitoring, and super admin analytics.
+
+Smart Care. Better Health. Better Life.`;
+
+  const copySnapshot = async () => {
+    try {
+      await navigator.clipboard.writeText(executiveMessage);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      alert("Copy failed. Please select and copy the summary manually.");
+    }
+  };
+
+  const shareSnapshot = () => {
+    const safeTodayRevenue =
+      typeof todayRevenue !== "undefined" ? todayRevenue : 0;
+
+    const safeRankedBranches =
+      typeof rankedBranches !== "undefined" ? rankedBranches : [];
+
+    const safeDepartmentAnalytics =
+      typeof departmentAnalytics !== "undefined" ? departmentAnalytics : [];
+
+    const snapshotData = {
+      generatedAt: new Date().toISOString(),
+      branches: BRANCHES.length,
+      doctors: doctors.length,
+      activeDoctors: activeDoctors.length,
+      appointments: appointments.length,
+      todayAppointments: todayItems.length,
+      totalRevenue,
+      todayRevenue: safeTodayRevenue,
+      topBranch: topBranch.city,
+      highDemandDepartment,
+      activeCityAdmins: `${activeCityAdmins.length}/${CITY_ADMINS.length}`,
+      branchRanking: safeRankedBranches.slice(0, 5).map((branch) => ({
+        city: branch.city,
+        appointments: branch.appointments,
+        doctors: branch.doctors,
+        todayAppointments: branch.todayAppointments,
+        revenue: branch.revenue,
+      })),
+      departmentDemand: safeDepartmentAnalytics.slice(0, 5),
+    };
+
+    localStorage.setItem(
+      "smarthealthcare_executive_snapshot",
+      JSON.stringify(snapshotData)
+    );
+
+    window.open(
+      `${window.location.origin}/executive-snapshot.html`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  return (
+    <div className="grid items-start gap-7 xl:grid-cols-[1fr_0.72fr]">
+      <GlassCard>
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-950 via-blue-900 to-emerald-700 p-8 text-white shadow-2xl">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 left-20 h-72 w-72 rounded-full bg-blue-300/20 blur-3xl" />
+
+          <div className="relative">
+            <div className="flex flex-wrap gap-3">
+              <span className="rounded-full bg-white/15 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white ring-1 ring-white/20">
+                CEO / HR Read-only View
+              </span>
+              <span className="rounded-full bg-emerald-300/20 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-emerald-100 ring-1 ring-emerald-200/30">
+                No Patient Personal Data
+              </span>
+            </div>
+
+            <h2 className="mt-5 text-4xl font-black leading-tight">
+              Executive Management Snapshot
+            </h2>
+
+            <p className="mt-4 max-w-3xl text-base font-medium leading-7 text-white/78">
+              A leadership-ready summary for CEO, HR, and hospital management.
+              This view shows safe operational KPIs such as branches, doctors,
+              appointments, revenue, department demand, and branch performance.
+            </p>
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={copySnapshot}
+                className="rounded-2xl bg-white px-6 py-4 text-base font-black text-blue-900 shadow-xl transition hover:scale-[1.02]"
+              >
+                Copy Executive Summary
+              </button>
+
+              <button
+                type="button"
+                onClick={shareSnapshot}
+                className="rounded-2xl border border-white/25 bg-white/10 px-6 py-4 text-base font-black text-white shadow-xl transition hover:bg-white/15"
+              >
+                Open Professional Snapshot Page
+              </button>
+            </div>
+
+            {copied && (
+              <p className="mt-4 w-fit rounded-2xl bg-emerald-300/20 px-4 py-3 text-sm font-black text-emerald-100 ring-1 ring-emerald-200/30">
+                Executive summary copied successfully.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <ExecutiveKpi title="Branches" value={BRANCHES.length} note="Tamil Nadu network" />
+          <ExecutiveKpi title="Doctors" value={doctors.length} note={`${activeDoctors.length} active`} />
+          <ExecutiveKpi title="Appointments" value={appointments.length} note={`${todayItems.length} today`} />
+          <ExecutiveKpi title="Revenue" value={`Rs. ${totalRevenue.toLocaleString("en-IN")}`} note={`Today Rs. ${todayRevenue.toLocaleString("en-IN")}`} />
+        </div>
+
+        <div className="mt-6 grid gap-6 xl:grid-cols-2">
+          <div className="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">
+                  Branch Ranking
+                </p>
+                <h3 className="mt-2 text-xl font-black text-[#101735]">
+                  Top Performing Branches
+                </h3>
+              </div>
+              <span className="rounded-full bg-blue-50 px-4 py-2 text-xs font-black text-blue-700">
+                By appointments
+              </span>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {rankedBranches.slice(0, 5).map((branch, index) => (
+                <div
+                  key={branch.id}
+                  className="flex items-center gap-4 rounded-2xl border border-blue-50 bg-blue-50/45 p-4"
+                >
+                  <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-700 text-sm font-black text-white">
+                    {index + 1}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-black text-[#101735]">{branch.city}</p>
+                    <p className="text-xs font-semibold text-slate-500">
+                      {branch.doctors} doctors · {branch.todayAppointments} today
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black text-blue-700">
+                      {branch.appointments}
+                    </p>
+                    <p className="text-xs font-semibold text-slate-500">
+                      appointments
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-emerald-100 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-600">
+                  HR Demand View
+                </p>
+                <h3 className="mt-2 text-xl font-black text-[#101735]">
+                  Department Demand
+                </h3>
+              </div>
+              <span className="rounded-full bg-emerald-50 px-4 py-2 text-xs font-black text-emerald-700">
+                Staffing insight
+              </span>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {departmentAnalytics.slice(0, 5).map((item) => (
+                <div
+                  key={item.department}
+                  className="rounded-2xl border border-emerald-50 bg-emerald-50/50 p-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="font-black text-[#101735]">{item.department}</p>
+                    <p className="text-sm font-black text-emerald-700">
+                      {item.count} appointments
+                    </p>
+                  </div>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-white">
+                    <div
+                      className="h-full rounded-full bg-emerald-600"
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          (item.count / Math.max(departmentAnalytics[0]?.count || 1, 1)) * 100
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+
+              {departmentAnalytics.length === 0 && (
+                <p className="rounded-2xl border border-dashed border-emerald-100 p-5 text-sm font-semibold text-slate-500">
+                  No department demand data available yet.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </GlassCard>
+
+      <div className="space-y-6">
+        <GlassCard>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-violet-600">
+            Doctor Workload
+          </p>
+          <h3 className="mt-2 text-2xl font-black text-[#101735]">
+            Top Doctor Load
+          </h3>
+          <p className="mt-2 text-sm font-semibold text-slate-500">
+            Helps HR and operations balance appointment load across doctors.
+          </p>
+
+          <div className="mt-5 space-y-3">
+            {doctorWorkload.map(({ doctor, count }, index) => (
+              <div
+                key={doctor.doctor_id}
+                className="rounded-2xl border border-violet-100 bg-violet-50/60 p-4"
+              >
+                <div className="flex items-center gap-3">
+                  <DoctorAvatar doctor={doctor} size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-black text-[#101735]">
+                      Dr. {doctor.first_name} {doctor.last_name}
+                    </p>
+                    <p className="text-xs font-semibold text-slate-500">
+                      {doctor.department || "General"} · Rank {index + 1}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-black text-violet-700">{count}</p>
+                    <p className="text-xs font-semibold text-slate-500">visits</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {doctorWorkload.length === 0 && (
+              <p className="rounded-2xl border border-dashed border-violet-100 p-5 text-sm font-semibold text-slate-500">
+                No doctor workload data available yet.
+              </p>
+            )}
+          </div>
+        </GlassCard>
+
+        <GlassCard>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-600">
+            Management Recommendation
+          </p>
+          <h3 className="mt-2 text-2xl font-black text-[#101735]">
+            CEO / HR Action Notes
+          </h3>
+
+          <div className="mt-5 space-y-3 text-sm font-semibold leading-6 text-slate-600">
+            <p className="rounded-2xl bg-amber-50 p-4">
+              Focus on {highDemandDepartment} because it currently has the highest appointment demand.
+            </p>
+            <p className="rounded-2xl bg-blue-50 p-4">
+              Monitor {topBranch.city} branch performance and use it as a reference for other branches.
+            </p>
+            <p className="rounded-2xl bg-emerald-50 p-4">
+              Maintain active doctor availability and city admin support to improve patient service quality.
+            </p>
+          </div>
+        </GlassCard>
+
+        <GlassCard>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+            Privacy Note
+          </p>
+          <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
+            This executive snapshot is designed for management review only.
+            It shows operational KPIs and does not display patient personal data,
+            medical history, phone numbers, or confidential clinical records.
+          </p>
+        </GlassCard>
+      </div>
+    </div>
+  );
+}
+
+
+function ExecutiveKpi({ title, value, note }) {
+  return (
+    <div className="rounded-[2rem] border border-white/80 bg-white/90 p-5 shadow-xl shadow-slate-200/50">
+      <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+        {title}
+      </p>
+      <p className="mt-2 text-3xl font-black text-[#101735]">{value}</p>
+      <p className="mt-1 text-sm font-bold text-slate-500">{note}</p>
+    </div>
+  );
+}
+
+function MobileKpi({ label, value }) {
+  return (
+    <div className="rounded-3xl bg-white/12 p-4 text-center">
+      <p className="text-2xl font-black">{value}</p>
+      <p className="mt-1 text-xs font-bold text-white/60">{label}</p>
     </div>
   );
 }
@@ -3011,83 +4137,444 @@ function AdminDoctorsPanel({ doctors, compact = false }) {
   );
 }
 
-function AdminAppointmentsPanel({ appointments, doctors, compact = false }) {
-  const visibleAppointments = compact ? appointments.slice(0, 6) : appointments;
 
+
+function getCityAdminAppointmentDate(appointment) {
   return (
-    <GlassCard>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-600">
-            Schedule
-          </p>
-          <h2 className="mt-2 text-2xl font-black text-slate-950">
-            Appointment Monitoring
-          </h2>
-        </div>
-        <span className="rounded-full bg-blue-100 px-4 py-2 text-xs font-black text-blue-700">
-          {appointments.length} Records
-        </span>
-      </div>
-
-      <div className={`${compact ? "mt-5 overflow-hidden rounded-3xl border border-slate-100" : "mt-5 max-h-[650px] overflow-hidden rounded-3xl border border-slate-100"}`}>
-        <div className="h-full overflow-x-auto overflow-y-auto">
-          <table className="w-full min-w-[800px] text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-5 py-4">Appointment</th>
-                <th className="px-5 py-4">Doctor</th>
-                <th className="px-5 py-4">Department</th>
-                <th className="px-5 py-4">Date</th>
-                <th className="px-5 py-4">Token</th>
-                <th className="px-5 py-4">Status</th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-slate-100 bg-white">
-              {visibleAppointments.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="px-5 py-10 text-center text-sm font-semibold text-slate-500">
-                    No appointment records loaded.
-                  </td>
-                </tr>
-              ) : (
-                visibleAppointments.map((appointment) => {
-                  const doctor = getDoctorForAppointment(doctors, appointment);
-
-                  return (
-                    <tr key={appointment.appointment_id}>
-                      <td className="px-5 py-4 font-black text-slate-950">
-                        {appointment.appointment_id}
-                      </td>
-                      <td className="px-5 py-4 font-semibold text-slate-600">
-                        {doctorTitle(doctor, appointment.doctor_id)}
-                      </td>
-                      <td className="px-5 py-4 text-slate-600">
-                        {appointment.department}
-                      </td>
-                      <td className="px-5 py-4 text-slate-600">
-                        {formatDate(appointment.appointment_date)}
-                      </td>
-                      <td className="px-5 py-4 text-lg font-black text-blue-700">
-                        {appointment.token_number || "--"}
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={`rounded-full px-3 py-1.5 text-xs font-black ${getStatusClass(appointment.status)}`}>
-                          {appointment.status}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </GlassCard>
+    appointment?.appointment_date ||
+    appointment?.scheduled_date ||
+    appointment?.date ||
+    ""
   );
 }
+
+function getCityAdminAppointmentTime(appointment) {
+  return (
+    appointment?.slot_time ||
+    appointment?.appointment_time ||
+    appointment?.time ||
+    ""
+  );
+}
+
+function getCityAdminCreatedTime(appointment) {
+  const values = [
+    appointment?.created_at,
+    appointment?.createdAt,
+    appointment?.booked_at,
+    appointment?.bookedAt,
+    appointment?.updated_at,
+    appointment?.updatedAt,
+    appointment?.appointment_date,
+  ];
+
+  for (const value of values) {
+    if (!value) continue;
+
+    const parsed = new Date(value);
+
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed.getTime();
+    }
+  }
+
+  const idNumber = String(appointment?.appointment_id || "").replace(/\D/g, "");
+  return idNumber ? Number(idNumber) : 0;
+}
+
+function isCityAdminCancelled(appointment) {
+  const status = String(appointment?.status || "").toLowerCase();
+  return status.includes("cancel");
+}
+
+function isCityAdminCompleted(appointment) {
+  const status = String(appointment?.status || "").toLowerCase();
+  return status.includes("complete");
+}
+
+function isCityAdminModified(appointment) {
+  const status = String(appointment?.status || "").toLowerCase();
+
+  if (
+    status.includes("modified") ||
+    status.includes("rescheduled") ||
+    status.includes("reschedule")
+  ) {
+    return true;
+  }
+
+  if (
+    appointment?.modified_at ||
+    appointment?.rescheduled_at ||
+    appointment?.previous_slot_time ||
+    appointment?.previous_appointment_date ||
+    appointment?.old_slot_time ||
+    appointment?.old_appointment_date
+  ) {
+    return true;
+  }
+
+  const created = appointment?.created_at || appointment?.createdAt;
+  const updated = appointment?.updated_at || appointment?.updatedAt;
+
+  if (created && updated) {
+    return String(created).slice(0, 19) !== String(updated).slice(0, 19);
+  }
+
+  return false;
+}
+
+function isCityAdminToday(appointment) {
+  const dateValue = getCityAdminAppointmentDate(appointment);
+
+  if (!dateValue) return false;
+
+  const appointmentDate = new Date(dateValue);
+  const today = new Date();
+
+  appointmentDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  return appointmentDate.getTime() === today.getTime();
+}
+
+function isCityAdminUpcoming(appointment) {
+  if (isCityAdminCancelled(appointment) || isCityAdminCompleted(appointment)) {
+    return false;
+  }
+
+  const dateValue = getCityAdminAppointmentDate(appointment);
+
+  if (!dateValue) return false;
+
+  const appointmentDate = new Date(dateValue);
+  const today = new Date();
+
+  appointmentDate.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+
+  return appointmentDate >= today;
+}
+
+function getCityAdminStatusClass(status) {
+  const value = String(status || "").toLowerCase();
+
+  if (value.includes("cancel")) return "bg-red-50 text-red-700";
+  if (value.includes("complete")) return "bg-slate-100 text-slate-700";
+  if (value.includes("reschedule") || value.includes("modified")) return "bg-amber-50 text-amber-700";
+
+  return "bg-emerald-50 text-emerald-700";
+}
+
+function getCityAdminDoctorName(doctors, appointment) {
+  const doctor = doctors.find(
+    (item) =>
+      String(item.doctor_id) === String(appointment.doctor_id) ||
+      String(item.id) === String(appointment.doctor_id)
+  );
+
+  return (
+    doctor?.name ||
+    doctor?.doctor_name ||
+    doctor?.full_name ||
+    appointment?.doctor_name ||
+    appointment?.doctor_id ||
+    "--"
+  );
+}
+
+function getCityAdminPatientName(appointment) {
+  return (
+    appointment?.patient_name ||
+    appointment?.patientName ||
+    appointment?.name ||
+    appointment?.full_name ||
+    "--"
+  );
+}
+
+function formatCityAdminDate(value) {
+  if (!value) return "--";
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return parsed.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function formatCityAdminTime(value) {
+  if (!value) return "--";
+
+  const raw = String(value);
+
+  if (/^\d{2}:\d{2}/.test(raw)) {
+    return raw.slice(0, 5);
+  }
+
+  return raw;
+}
+
+function AdminAppointmentsPanel({ appointments = [], doctors = [], compact = false }) {
+  const [appointmentFilter, setAppointmentFilter] = useState("all");
+
+  const sortedAppointments = [...appointments].sort((a, b) => {
+    const createdCompare = getCityAdminCreatedTime(b) - getCityAdminCreatedTime(a);
+
+    if (createdCompare !== 0) return createdCompare;
+
+    const dateCompare = String(getCityAdminAppointmentDate(b)).localeCompare(
+      String(getCityAdminAppointmentDate(a))
+    );
+
+    if (dateCompare !== 0) return dateCompare;
+
+    return String(getCityAdminAppointmentTime(b)).localeCompare(
+      String(getCityAdminAppointmentTime(a))
+    );
+  });
+
+  let filteredAppointments = sortedAppointments;
+
+  if (appointmentFilter === "recent") {
+    filteredAppointments = sortedAppointments.slice(0, 10);
+  }
+
+  if (appointmentFilter === "cancelled") {
+    filteredAppointments = sortedAppointments.filter(isCityAdminCancelled);
+  }
+
+  if (appointmentFilter === "modified") {
+    filteredAppointments = sortedAppointments.filter(isCityAdminModified);
+  }
+
+  if (appointmentFilter === "today") {
+    filteredAppointments = sortedAppointments.filter(isCityAdminToday);
+  }
+
+  if (appointmentFilter === "upcoming") {
+    filteredAppointments = sortedAppointments.filter(isCityAdminUpcoming);
+  }
+
+  const rowsToShow = compact ? filteredAppointments.slice(0, 6) : filteredAppointments;
+
+  const totalAppointments = sortedAppointments.length;
+  const recentAppointments = sortedAppointments.slice(0, 10).length;
+  const todayAppointments = sortedAppointments.filter(isCityAdminToday).length;
+  const upcomingAppointments = sortedAppointments.filter(isCityAdminUpcoming).length;
+  const modifiedAppointments = sortedAppointments.filter(isCityAdminModified).length;
+  const cancelledAppointments = sortedAppointments.filter(isCityAdminCancelled).length;
+
+  const title =
+    appointmentFilter === "recent"
+      ? "Recently Booked Appointments"
+      : appointmentFilter === "today"
+      ? "Today Appointments"
+      : appointmentFilter === "upcoming"
+      ? "Upcoming Appointments"
+      : appointmentFilter === "cancelled"
+      ? "Cancelled Appointments"
+      : appointmentFilter === "modified"
+      ? "Modified / Rescheduled Appointments"
+      : "All Appointments";
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-[2rem] bg-gradient-to-br from-blue-900 via-blue-700 to-emerald-600 p-7 text-white shadow-2xl">
+        <p className="text-xs font-black uppercase tracking-[0.25em] text-emerald-200">
+          City-wise Appointment Monitoring
+        </p>
+
+        <h2 className="mt-3 text-4xl font-black">
+          Appointments Panel
+        </h2>
+
+        <p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-white/80">
+          New patient bookings, upcoming schedules, cancelled appointments, and modified appointments appear here for the assigned city branch.
+        </p>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-6">
+        <div className="rounded-[1.5rem] border border-blue-100 bg-white p-5 shadow-lg">
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400">All</p>
+          <p className="mt-2 text-3xl font-black text-blue-800">{totalAppointments}</p>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-emerald-100 bg-white p-5 shadow-lg">
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400">Recent</p>
+          <p className="mt-2 text-3xl font-black text-emerald-700">{recentAppointments}</p>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-cyan-100 bg-white p-5 shadow-lg">
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400">Today</p>
+          <p className="mt-2 text-3xl font-black text-cyan-700">{todayAppointments}</p>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-violet-100 bg-white p-5 shadow-lg">
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400">Upcoming</p>
+          <p className="mt-2 text-3xl font-black text-violet-700">{upcomingAppointments}</p>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-amber-100 bg-white p-5 shadow-lg">
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400">Modified</p>
+          <p className="mt-2 text-3xl font-black text-amber-700">{modifiedAppointments}</p>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-red-100 bg-white p-5 shadow-lg">
+          <p className="text-xs font-black uppercase tracking-widest text-slate-400">Cancelled</p>
+          <p className="mt-2 text-3xl font-black text-red-700">{cancelledAppointments}</p>
+        </div>
+      </div>
+
+      <div className="rounded-[2rem] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-100/50">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-600">
+              Appointment Records
+            </p>
+            <h3 className="mt-2 text-2xl font-black text-[#101735]">
+              {title}
+            </h3>
+            <p className="mt-1 text-sm font-semibold text-slate-500">
+              Use the dropdown to monitor city-wise appointment activity.
+            </p>
+          </div>
+
+          <div className="w-full max-w-sm">
+            <label className="mb-2 block text-xs font-black uppercase tracking-widest text-slate-500">
+              Appointment Filter
+            </label>
+
+            <select
+              value={appointmentFilter}
+              onChange={(event) => setAppointmentFilter(event.target.value)}
+              className="w-full rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-black text-blue-900 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+            >
+              <option value="all">Show All Appointments</option>
+              <option value="recent">Recently Booked Appointments</option>
+              <option value="today">Today Appointments</option>
+              <option value="upcoming">Upcoming Appointments</option>
+              <option value="cancelled">Cancelled Appointments</option>
+              <option value="modified">Modified / Rescheduled Appointments</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="rounded-full bg-blue-50 px-4 py-2 text-xs font-black text-blue-700">
+            Showing {rowsToShow.length} records
+          </span>
+          <span className="rounded-full bg-emerald-50 px-4 py-2 text-xs font-black text-emerald-700">
+            City-wise filtered
+          </span>
+          <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">
+            New bookings appear automatically
+          </span>
+        </div>
+
+        {rowsToShow.length === 0 ? (
+          <div className="mt-6 rounded-3xl border border-dashed border-blue-100 bg-blue-50/40 p-10 text-center">
+            <p className="text-lg font-black text-[#101735]">
+              No appointments found for this filter.
+            </p>
+            <p className="mt-2 text-sm font-semibold text-slate-500">
+              When patients book, cancel, or modify appointments, records will appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 overflow-hidden rounded-3xl border border-blue-100">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1120px] text-left text-sm">
+                <thead className="bg-blue-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-5 py-4">Appointment ID</th>
+                    <th className="px-5 py-4">Patient ID</th>
+                    <th className="px-5 py-4">Patient</th>
+                    <th className="px-5 py-4">Doctor</th>
+                    <th className="px-5 py-4">Department</th>
+                    <th className="px-5 py-4">Date</th>
+                    <th className="px-5 py-4">Slot</th>
+                    <th className="px-5 py-4">Token</th>
+                    <th className="px-5 py-4">Wait</th>
+                    <th className="px-5 py-4">Status</th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-blue-50 bg-white">
+                  {rowsToShow.map((appointment) => {
+                    const status = appointment.status || "SCHEDULED";
+
+                    return (
+                      <tr key={appointment.appointment_id} className="hover:bg-blue-50/40">
+                        <td className="px-5 py-4 font-black text-[#101735]">
+                          {appointment.appointment_id || "--"}
+                        </td>
+
+                        <td className="px-5 py-4 font-black text-blue-700">
+                          {appointment.patient_id || "--"}
+                        </td>
+
+                        <td className="px-5 py-4 font-semibold text-slate-600">
+                          {getCityAdminPatientName(appointment)}
+                        </td>
+
+                        <td className="px-5 py-4 font-semibold text-slate-600">
+                          {getCityAdminDoctorName(doctors, appointment)}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600">
+                          {appointment.department || "--"}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600">
+                          {formatCityAdminDate(getCityAdminAppointmentDate(appointment))}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600">
+                          {formatCityAdminTime(getCityAdminAppointmentTime(appointment))}
+                        </td>
+
+                        <td className="px-5 py-4 text-lg font-black text-blue-700">
+                          {appointment.token_number || "--"}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-600">
+                          {appointment.estimated_wait_minutes ?? "--"} mins
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <span className={"rounded-full px-4 py-2 text-xs font-black " + getCityAdminStatusClass(status)}>
+                            {status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-[2rem] border border-emerald-100 bg-emerald-50 p-6">
+        <p className="text-sm font-black text-emerald-800">
+          How this helps City Admin
+        </p>
+        <p className="mt-2 text-sm font-semibold leading-7 text-emerald-900/75">
+          When a new patient registers and books an appointment, the appointment appears in this city-wise panel automatically. The dropdown helps the admin check recently booked, today, upcoming, cancelled, and modified appointments.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 
 function CityBranchPanel({ branch, hospitalImage }) {
   return (
@@ -3123,6 +4610,10 @@ function CityBranchPanel({ branch, hospitalImage }) {
     </div>
   );
 }
+
+
+
+
 
 
 

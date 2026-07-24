@@ -1,39 +1,56 @@
-﻿backend/.env
+﻿# Environment variables and secrets
 .env
-
-node_modules/
-frontend/node_modules/
-
-__pycache__/
-*.pyc
-.venv/
-venv/
-
-dist/
-frontend/dist/
-
-*.zip
-*.log
-
-# Local secrets
+.env.*
+!.env.example
 backend/.env
-.env
 
-# Node
+# Node dependencies and builds
 node_modules/
 frontend/node_modules/
-frontend/dist/
 dist/
+frontend/dist/
+build/
+frontend/build/
 
-# Python
-__pycache__/
-*.pyc
-.venv/
+# Python environments and cache
 venv/
+.venv/
+backend/venv/
+backend/.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
 
-# Local backups
+# Temporary and backup files
+*.bak
 *.backup*
+*.finalbak
+*.vitalsbak
 *.zip
 *.log
-frontend/src/pages/Dashboards.jsx.backup*
-smarthealthcare_logo.png
+
+# Temporary development scripts
+backend/add_*.py
+backend/fix_*.py
+frontend/add_*.py
+frontend/fix_*.py
+frontend/update_*.py
+frontend/remove_*.py
+frontend/clean_*.py
+frontend/polish_*.py
+
+# Old and backup backend files
+backend/models_old.py
+backend/*.backup*
+backend/mnt/
+
+# Optional local SQL repair scripts
+fix_*.sql
+
+# Editor files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
